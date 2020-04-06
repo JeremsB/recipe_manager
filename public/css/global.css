@@ -1,0 +1,8 @@
+* {
+    font-size: 1rem !important;
+}
+
+/* Navbar */
+.navbar .logo {
+    width: 100px;
+}
