@@ -1,3 +1,9 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 * {
     font-size: 1rem !important;
 }
@@ -42,3 +48,34 @@
     width: 100px;
 }
 
+/* Form */
+form > div > div {
+    margin-bottom: 1rem;
+} 
+
+form label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+form textarea, textarea.form-control, input.form-control, input[type=text], input[type=password], input[type=email], input[type=number], [type=text].form-control, [type=password].form-control, [type=email].form-control, [type=tel].form-control, [contenteditable].form-control {
+    display: block;
+    height: calc(1.5em + 2rem);
+    padding: 1rem 0;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #666;
+    background-color: transparent;
+    background-clip: padding-box;
+    border: 0rem solid transparent;
+    border-radius: 0;
+    -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+}
+
+.form {
+    padding-top: 2rem;
+}
