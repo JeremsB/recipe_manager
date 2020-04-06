@@ -2,7 +2,43 @@
     font-size: 1rem !important;
 }
 
+.rainbow {
+    background-image: -webkit-gradient( linear, left top, right top, color-stop(0.01, #f23c51),  color-stop(0.5, #AA6FF8), color-stop(0.99, #3397cd) ) ;
+    color:transparent!important;
+    -webkit-background-clip: text;
+}
+
+.yellow {
+    color: yellow !important;
+}
+
+.pink {
+    color: deeppink !important;
+}
+
+.blue {
+    color: deepskyblue !important;
+}
+
+.green {
+    color: limegreen !important;
+}
+
+.red {
+    color: red !important;
+}
+
+.orange {
+    color: darkorange !important;
+}
+
+.violet {
+    color: darkviolet !important;
+}
+
+
 /* Navbar */
 .navbar .logo {
     width: 100px;
 }
+

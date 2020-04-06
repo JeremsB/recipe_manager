@@ -1,7 +1,9 @@
 {% set logged = is_granted('IS_AUTHENTICATED_FULLY') %}
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">MyRecipeManager</a>
+    <a class="navbar-brand rainbow" href="#">
+        <img src="/img/icon.png" style="width: 40px; margin-right: 10px;">
+           MyRecipeManager</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -10,23 +12,23 @@
         <ul class="navbar-nav mr-auto">
             {% if logged %}
             <li class="nav-item">
-                <a class="nav-link" href="/ingredients">Mes ingrédients</a>
+                <a class="nav-link red" href="/ingredients">Mes ingrédients</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/receipes">Mes recettes</a>
+                <a class="nav-link orange" href="/receipes">Mes recettes</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/shared-recipes">Les recettes de la communauté</a>
+                <a class="nav-link yellow" href="/shared-recipes">Les recettes de la communauté</a>
             </li>
             {% endif %}
         </ul>
         {% if logged %}
         <ul class="navbar-nav my-lg-0">
             <li class="nav-item">
-                <a class="nav-link" href="/account/profile">Modifier profil</a>
+                <a class="nav-link green" href="/account/profile">Modifier profil</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/account/profile">Modifier mot de passe</a>
+                <a class="nav-link blue" href="/account/profile">Modifier mot de passe</a>
             </li>
         </ul>
         {% else %}
