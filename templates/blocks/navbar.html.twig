@@ -1,0 +1,37 @@
+{% set logged = is_granted('IS_AUTHENTICATED_FULLY') %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">MyRecipeManager</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav mr-auto">
+            {% if logged %}
+            <li class="nav-item">
+                <a class="nav-link" href="/ingredients">Mes ingrédients</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/receipes">Mes recettes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/shared-recipes">Les recettes de la communauté</a>
+            </li>
+            {% endif %}
+        </ul>
+        {% if logged %}
+        <ul class="navbar-nav my-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/account/profile">Modifier profil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/account/profile">Modifier mot de passe</a>
+            </li>
+        </ul>
+        {% else %}
+        <a href="/login"><button class="btn btn-secondary mr-2 my-sm-0">Connexion</button></a>
+        <a href="/register"><button class="btn btn-secondary my-2 my-sm-0">Inscription</button></a>
+        {% endif %}
+    </div>
+</nav>

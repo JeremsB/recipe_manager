@@ -5,9 +5,13 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/global.css">
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        {% block header %}
+            {% include 'blocks/navbar.html.twig' %}
+        {% endblock %}
         {% block body %}{% endblock %}
 
         <script src="js/jquery.min.js"></script>
