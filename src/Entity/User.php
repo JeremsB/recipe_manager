@@ -4,9 +4,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(
+ *  fields={"email"}
+ * )
  */
 class User implements UserInterface
 {
@@ -19,18 +24,26 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $pseudo;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email()
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank() 
      */
     private $hash;
+
+    /**
+     * @Assert\EqualTo(propertyPath="hash")
+     */
+    public $passwordConfirm;
 
     public function getId(): ?int
     {
