@@ -1,20 +1,52 @@
+{% set logged = is_granted('IS_AUTHENTICATED_FULLY') %}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    {% if logged %}
+    <div class="container middle-screen">
+        <div>
+            <ul class="home-box">
+                <a href="/ingredients"><li class="home-box-items"><div class="red">Mes ingrédients</div></li></a>
+                <a href="/recipes"><li class="home-box-items"><div class="green">Mes recettes</div></li></a>
+                <a href="/shared-recipes"><li class="home-box-items"><div class="yellow">Recettes de la communauté</div></li></a>
+                <a href="/account/profile"><li class="home-box-items"><div class="orange">Voir mon profil</div></li></a>
+            </ul>
+        </div>
+    </div>
+    {% else %}
+    <div class="container middle-screen">
+        <div class="row flex-column">
+            <a class="navbar-brand rainbow" href="/">
+            <img src="/img/icon.png" style="width: 40px; margin-right: 10px;">
+            MyRecipeManager</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <p>Notre entreprise vient de signer un contrat pour développer un nouveau service en ligne : MyRecipeManager !</p>
+            <p>Quel est le but de cette application ? Cette application web va vous permettre de :</p>
+            <ul>
+                <li>Créer et gérer vos propres recettes</li>
+                <li>Partager vos recettes et vous inspirez des recettes partagées par la communautée</li>
+            </ul>
+            <p>Vous pouvez vous créer un compte et le gérer vous même. Une fois connectés, vous serez en mesure de gérer une liste d'ingrédients, créée par vous même !</p>
+            <p>Vous pourrez y ajouter des ingrédients (nom et prix). Cette liste d'ingrédients servira à créer vos propres recettes.</p>
+            <p>Vous pourrez donc composer vos propres recettes, avec plusieurs paramètres : </p>
+            <ul>
+                <li>Un nom ainsi qu'une courte description</li>
+                <li>Quelques instructions pour la réaliser</li>
+                <li>Le temps de préparation (en minutes) et le niveau de difficulté (De 1 à 5)</li>
+                <li>5 images pour illustrer vos propres recettes</li>
+                <li>Et le prix total de votre recette</li>
+            </ul>
+            <p>Vous poureez bien sur partager vos recetes à la communautée de MyRecipeManager, et voir les recettes partagées par la communautée !</p>
+            <p>Il vous sera également possible de noter les recettes partagées par la communauté</p>
+            <p>Une page sera disponible pour voir es meilleurs recettes (peut etre les votres seront parmis celle la) et aussi rechercher la recette qui vous intéresse en fonction d'un mot clé dans le nom de la recette !</p>
+        </div>
+    </div>
+    {% endif %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'D:/Workspace/my-recipe-manager/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'D:/Workspace/my-recipe-manager/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
-</div>
 {% endblock %}
