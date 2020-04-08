@@ -6,15 +6,15 @@
     <div class="container middle-screen">
         <ul class="ingredients list-group">
             <li><h1>Les ingrédients</h1></li>
-            <li class="ingredient list-group-item">
-                <div class="ingredient-name">
-                Ingrédient 1
-                </div>
+            {% for ingredient in ingredients %}
+            <li class="ingredient list-group-item" data-id="{{ ingredient["id"] }}">
+                <div class="ingredient">{{ ingredient["name"] }} au prix de {{ ingredient["price"] }}</div>
                 <div class="ingredient-actions">
-                    <div class="ingredient-edit">Modifier</div>
-                    <div class="ingredient-trash">Supprimer</div>
+                    <div class="ingredient-edit" data-id="{{ ingredient["id"] }}">Modifier</div>
+                    <div class="ingredient-trash" data-id="{{ ingredient["id"] }}">Supprimer</div>
                 </div>
             </li>
+            {% endfor %}
             <li class="ingredient-add">
                 Ajouter un ingrédient
             </li>
