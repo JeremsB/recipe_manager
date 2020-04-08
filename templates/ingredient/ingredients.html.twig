@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IngredientController!{% endblock %}
+
+{% block body %}
+    <div class="container middle-screen">
+        <ul class="ingredients list-group">
+            <li><h1>Les ingrédients</h1></li>
+            <li class="ingredient list-group-item">
+                <div class="ingredient-name">
+                Ingrédient 1
+                </div>
+                <div class="ingredient-actions">
+                    <div class="ingredient-edit">Modifier</div>
+                    <div class="ingredient-trash">Supprimer</div>
+                </div>
+            </li>
+            <li class="ingredient-add">
+                Ajouter un ingrédient
+            </li>
+        </ul>
+    </div>
+{% endblock %}
