@@ -1,0 +1,38 @@
+.ingredients {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    padding: 0rem !important;
+    width: 60%;
+    height: 85vh;
+    max-height: 85vh;
+}
+
+.ingredient {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.ingredient-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.ingredient-trash,
+.ingredient-edit,
+.ingredient-add {
+    cursor: pointer;
+}
+
+.ingredient-trash {
+    margin-left: 1.5rem;
+}
+
+.ingredient-add {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}

@@ -15,8 +15,6 @@ body {
     height: 90vh;
 }
 
-
-
 .rainbow {
     background-image: -webkit-gradient( linear, left top, right top, color-stop(0.01, #f23c51),  color-stop(0.5, #AA6FF8), color-stop(0.99, #3397cd) ) ;
     color:transparent!important;
@@ -49,6 +47,10 @@ body {
 
 .violet {
     color: darkviolet !important;
+}
+
+.white {
+    color: white !important;
 }
 
 /* Navbar */
@@ -117,3 +119,5 @@ form textarea, textarea.form-control, input.form-control, input[type=text], inpu
     font-size: 1.5rem !important;
     text-align: center;
 }
+
+
