@@ -6,6 +6,7 @@
     width: 60%;
     height: 85vh;
     max-height: 85vh;
+    overflow-y: auto;
 }
 
 .ingredient {
@@ -22,7 +23,9 @@
 
 .ingredient-trash,
 .ingredient-edit,
-.ingredient-add {
+.ingredient-add,
+.ingredient-adding-cancel,
+.ingredient-adding-add {
     cursor: pointer;
 }
 
@@ -35,4 +38,34 @@
     flex-direction: row;
     justify-content: flex-end;
     margin-top: 1rem;
+}
+
+.ingredient-adding {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.ingredient-add.active,
+.ingredient-adding.active {
+    display: none;
+}
+
+.ingredient-adding-fields,
+.ingredient-adding-submit {
+    display: flex;
+    flex-direction: row;
+}
+
+.ingredient-adding-fields > input {
+    padding: 0 !important;
+    height: 2rem !important;
+}
+
+.ingredient-adding-name,
+.ingredient-adding-add {
+    margin-right: 1.5rem;
 }

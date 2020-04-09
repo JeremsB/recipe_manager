@@ -15,8 +15,17 @@
                 </div>
             </li>
             {% endfor %}
-            <li class="ingredient-add">
-                Ajouter un ingrédient
+            <li class="ingredient-add">Ajouter un ingrédient</li>
+            <li class="ingredient-adding active">
+                <div class="ingredient-adding-fields">
+                    <input type="text" class="ingredient-adding-name" placeholder="Nom de l'ingrédient">
+                    <input type="text" class="ingredient-adding-price" placeholder="Prix de l'ingrédient">
+                </div>
+                <div class="ingredient-adding-submit">
+                    <div class="ingredient-adding-add">Ajouter</div>
+                    <div class="ingredient-adding-cancel">Annuler</div>
+                    
+                </div>
             </li>
         </ul>
     </div>

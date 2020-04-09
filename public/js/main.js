@@ -3,12 +3,28 @@
  */
 
 class ListIngredient {
-    constructor(trash) {
-        this.trash = trash;
+    constructor(list, trash, add, cancelAdding, addAdding) {
+        this.list = list;
+        
+        if(this.list) {
+            this.trash = trash;
+            this.add = add;
+            this.cancelAdding = cancelAdding;
+            this.addAdding = addAdding;
 
-        if(this.trash) {
-            this.listenOnClickTrash();
-        }
+            if(this.trash) {
+                this.listenOnClickTrash();
+            }
+
+            if(this.add) {
+                this.listenOnCLickAdd();
+
+                if(this.cancelAdding && this.addAdding) {
+                    this.listenOnClickCancelAdding();
+                    this.listenOnClickAddAdding();
+                }
+            }
+        }  
     }
 
     listenOnClickTrash() {
@@ -31,12 +47,129 @@ class ListIngredient {
             })
         })
     }
+
+    listenOnCLickAdd() {
+        this.add.addEventListener('click', event => {
+            event.preventDefault();
+
+            var liAdd = document.querySelector('.ingredient-add');
+            var liAdding = document.querySelector('.ingredient-adding');
+
+            liAdd.classList.add('active');
+            liAdding.classList.remove('active');
+        })
+    }
+
+    listenOnClickCancelAdding() {
+        this.cancelAdding.addEventListener('click', event => {
+            event.preventDefault();
+
+            var liAdd = document.querySelector('.ingredient-add');
+            var liAdding = document.querySelector('.ingredient-adding');
+
+            liAdd.classList.remove('active');
+            liAdding.classList.add('active');
+        })
+    }
+
+    listenOnClickAddAdding() {
+        this.addAdding.addEventListener('click', event => {
+            event.preventDefault();
+
+            var name = document.querySelector('.ingredient-adding-name').value;
+            var price = document.querySelector('.ingredient-adding-price').value;
+
+            if(this.isInt(price) || this.isFloat(price)) {
+                // Create on database
+                var encodedName = encodeURIComponent(window.btoa(name));
+                var encodedPrice = encodeURIComponent(window.btoa(price));
+
+                const url = `/ingredient/create/${encodedName}/${encodedPrice}`;
+
+                var id = 0;
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url);
+                xhr.onload = function () {
+                    var response = JSON.parse(xhr.response);
+                    id = response["id"];
+
+                    // Create new element
+                    var li = document.createElement('li');
+                    li.classList.add('ingredient');
+                    li.classList.add('list-group-item');
+                    li.dataset.id = 23;
+
+                    var divIngredient = document.createElement('div');
+                    divIngredient.classList.add('ingredient');
+                    divIngredient.innerHTML = response["name"] + " au prix de " + response["price"];
+
+                    var divIngredientActions = document.createElement('div');
+                    divIngredientActions.classList.add('ingredient-actions');
+
+                    var divIngredientEdit = document.createElement('div');
+                    divIngredientEdit.classList.add('ingredient-edit');
+                    divIngredientEdit.dataset.id = id;
+                    divIngredientEdit.innerHTML = "Modifier";
+
+                    var divIngredientTrash = document.createElement('div');
+                    divIngredientTrash.classList.add('ingredient-trash');
+                    divIngredientTrash.dataset.id = id;
+                    divIngredientTrash.innerHTML = "Supprimer";
+
+                    divIngredientActions.appendChild(divIngredientEdit);
+                    divIngredientActions.appendChild(divIngredientTrash);
+                    li.appendChild(divIngredient);
+                    li.appendChild(divIngredientActions);
+
+                    var list = document.querySelector('.ingredients');
+                    list.insertBefore(li, document.querySelector('li.ingredient:nth-child(2)'));
+
+                    list.scrollTop = 0;
+                    
+                    // Add class active on elements
+                    var liAdd = document.querySelector('.ingredient-add');
+                    var liAdding = document.querySelector('.ingredient-adding');
+
+                    liAdd.classList.remove('active');
+                    liAdding.classList.add('active');
+                };
+                xhr.send();
+            }else {
+                confirm("Veuillez renseigner un prix valable")
+            }
+        })
+    }
+    
+    isInt(val) {
+        var intRegex = /^-?\d+$/;
+        if (!intRegex.test(val))
+            return false;
+    
+        var intVal = parseInt(val, 10);
+        return parseFloat(val) == intVal && !isNaN(intVal);
+    }
+
+    isFloat(val) {
+        var floatRegex = /^-?\d+(?:[.,]\d*?)?$/;
+        if (!floatRegex.test(val))
+            return false;
+    
+        val = parseFloat(val);
+        if (isNaN(val))
+            return false;
+        return true;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const list = document.querySelector('.ingredients');
     const trash = [].slice.call(document.querySelectorAll('.ingredient-trash'));
+    const add = document.querySelector('.ingredient-add');
 
-    if(trash) {
-        new ListIngredient(trash);
+    const cancelAdding = document.querySelector('.ingredient-adding-cancel');
+    const addAdding = document.querySelector('.ingredient-adding-add');
+
+    if(list && trash && add && cancelAdding && addAdding) {
+        new ListIngredient(list, trash, add, cancelAdding, addAdding);
     }
 })
