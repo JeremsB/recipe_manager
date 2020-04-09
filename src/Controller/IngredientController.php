@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Ingredient;
 use App\Repository\IngredientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,8 +54,47 @@ class IngredientController extends AbstractController
         }
 
         return $this->render('ingredient/ingredients.html.twig', [
-            'ingredients' => $ingredients
+            'ingredients' => array_reverse($ingredients)
         ]);
+    }
+
+    /**
+     * Create an ingredient
+     * 
+     * @Route("/ingredient/create/{name}/{price}", name="create_ingredient")
+     *
+     * @param [string] $name
+     * @param [int] $price
+     * @param EntityManagerInterface $manager
+     * @param IngredientRepository $ingredientRepo
+     * @return Response
+     */
+    public function create($name, $price, EntityManagerInterface $manager) : Response {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        $ingredient = new Ingredient();
+
+        $ingredient->setUser($user);
+        $ingredient->setName(IngredientController::decode($name));
+        $ingredient->setPrice((float) IngredientController::decode($price));
+
+        $manager->persist($ingredient);
+        $manager->flush();
+
+        return $this->json([
+            'message'   => 'Success',
+            'id'        => $ingredient->getId(),
+            'name'      => $ingredient->getName(),
+            'price'     => $ingredient->getPrice()
+        ], 200);
     }
 
     /**
@@ -86,5 +126,9 @@ class IngredientController extends AbstractController
         return $this->json([
             'message'        => 'Success'
         ], 200);
+    }
+
+    public static function decode($str) {
+        return base64_decode(urldecode($str));
     }
 }
