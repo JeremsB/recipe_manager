@@ -5,28 +5,28 @@
 {% block body %}
     <div class="container middle-screen">
         <ul class="ingredients list-group">
-            <li><h1>Les ingrédients</h1></li>
-            {% for ingredient in ingredients %}
-            <li class="ingredient list-group-item" data-id="{{ ingredient["id"] }}">
-                <div class="ingredient">{{ ingredient["name"] }} au prix de {{ ingredient["price"] }}</div>
-                <div class="ingredient-actions">
-                    <div class="ingredient-edit" data-id="{{ ingredient["id"] }}">Modifier</div>
-                    <div class="ingredient-trash" data-id="{{ ingredient["id"] }}">Supprimer</div>
-                </div>
-            </li>
-            {% endfor %}
-            <li class="ingredient-add">Ajouter un ingrédient</li>
+            <li class="text-center"><h1>Les ingrédients</h1></li>
+            <li class="ingredient-add"><span>Ajouter un ingrédient</span></li>
             <li class="ingredient-adding active">
                 <div class="ingredient-adding-fields">
                     <input type="text" class="ingredient-adding-name" placeholder="Nom de l'ingrédient">
                     <input type="text" class="ingredient-adding-price" placeholder="Prix de l'ingrédient">
                 </div>
                 <div class="ingredient-adding-submit">
-                    <div class="ingredient-adding-add">Ajouter</div>
-                    <div class="ingredient-adding-cancel">Annuler</div>
+                    <div class="ingredient-adding-add"><span>Ajouter</span></div>
+                    <div class="ingredient-adding-cancel"><span>Annuler</span></div>
                     
                 </div>
             </li>
+            {% for ingredient in ingredients %}
+            <li class="ingredient" data-id="{{ ingredient["id"] }}">
+                <div class="ingredient">{{ ingredient["name"] }} au prix de {{ ingredient["price"] }}</div>
+                <div class="ingredient-actions">
+                    <div class="ingredient-edit" data-id="{{ ingredient["id"] }}"><span>Modifier</span></div>
+                    <div class="ingredient-trash" data-id="{{ ingredient["id"] }}"><span>Supprimer</span></div>
+                </div>
+            </li>
+            {% endfor %}
         </ul>
     </div>
 {% endblock %}
