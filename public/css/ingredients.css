@@ -13,6 +13,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin: 0.25rem 0.5rem;
 }
 
 .ingredient-actions {
@@ -37,7 +38,15 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    margin-top: 1rem;
+    margin: 1rem 0.75rem 2rem 0;
+}
+
+.ingredient-adding-cancel > span,
+.ingredient-trash > span {
+    background-color: red;
+    border-radius: 8px;
+    color: white;
+    padding: 0.5rem;
 }
 
 .ingredient-adding {
@@ -46,7 +55,15 @@
     justify-content: flex-start;
     align-items: baseline;
     justify-content: space-between;
-    margin-top: 1rem;
+    margin: 1rem 0.75rem 2rem 0;
+}
+
+.ingredient-adding-add > span,
+.ingredient-add > span {
+    background-color: green;
+    border-radius: 8px;
+    color: white;
+    padding: 0.5rem;
 }
 
 .ingredient-add.active,

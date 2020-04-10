@@ -96,8 +96,7 @@ class ListIngredient {
                     // Create new element
                     var li = document.createElement('li');
                     li.classList.add('ingredient');
-                    li.classList.add('list-group-item');
-                    li.dataset.id = 23;
+                    li.dataset.id = id;
 
                     var divIngredient = document.createElement('div');
                     divIngredient.classList.add('ingredient');
@@ -109,12 +108,16 @@ class ListIngredient {
                     var divIngredientEdit = document.createElement('div');
                     divIngredientEdit.classList.add('ingredient-edit');
                     divIngredientEdit.dataset.id = id;
-                    divIngredientEdit.innerHTML = "Modifier";
+                    var spanIngredientEdit = document.createElement('span');
+                    spanIngredientEdit.innerHTML = "Modifier";
+                    divIngredientEdit.appendChild(spanIngredientEdit)
 
                     var divIngredientTrash = document.createElement('div');
                     divIngredientTrash.classList.add('ingredient-trash');
                     divIngredientTrash.dataset.id = id;
-                    divIngredientTrash.innerHTML = "Supprimer";
+                    var spanIngredientTrash = document.createElement('span');
+                    spanIngredientTrash.innerHTML = "Supprimer";
+                    divIngredientTrash.appendChild(spanIngredientTrash)
 
                     divIngredientActions.appendChild(divIngredientEdit);
                     divIngredientActions.appendChild(divIngredientTrash);
@@ -122,9 +125,28 @@ class ListIngredient {
                     li.appendChild(divIngredientActions);
 
                     var list = document.querySelector('.ingredients');
-                    list.insertBefore(li, document.querySelector('li.ingredient:nth-child(2)'));
+                    list.insertBefore(li, document.querySelector('li.ingredient:nth-child(4)'));
 
+                    // Reset scrool
                     list.scrollTop = 0;
+
+                    // Add event listener on new button
+                    divIngredientTrash.addEventListener('click', event => {
+                        event.preventDefault();
+        
+                        if (confirm("Voulez vous supprimer l'ingrédient ?")) {
+                            // Delete on list
+                            var item = document.querySelector(`.ingredient[data-id="${divIngredientTrash.dataset.id}"]`);
+                            item.remove();
+        
+                            // Delete on database
+                            const url = `/ingredient/delete/${divIngredientTrash.dataset.id}`;
+        
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('GET', url);
+                            xhr.send();
+                        }
+                    })
                     
                     // Add class active on elements
                     var liAdd = document.querySelector('.ingredient-add');
