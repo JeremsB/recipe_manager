@@ -3,9 +3,9 @@
 {% block title %}Hello IngredientController!{% endblock %}
 
 {% block body %}
-    <div class="container middle-screen">
+    <div class="container mt-5">
+        <h1>Les ingrédients</h1>
         <ul class="ingredients list-group">
-            <li class="text-center"><h1>Les ingrédients</h1></li>
             <li class="ingredient-add"><span>Ajouter un ingrédient</span></li>
             <li class="ingredient-adding active">
                 <div class="ingredient-adding-fields">
@@ -20,10 +20,19 @@
             </li>
             {% for ingredient in ingredients %}
             <li class="ingredient" data-id="{{ ingredient["id"] }}">
-                <div class="ingredient">{{ ingredient["name"] }} au prix de {{ ingredient["price"] }}</div>
-                <div class="ingredient-actions">
+                <div class="ingredient" data-id="{{ ingredient["id"] }}">{{ ingredient["name"] }} au prix de {{ ingredient["price"] }}</div>
+                <div class="ingredient-actions" data-id="{{ ingredient["id"] }}">
                     <div class="ingredient-edit" data-id="{{ ingredient["id"] }}"><span>Modifier</span></div>
                     <div class="ingredient-trash" data-id="{{ ingredient["id"] }}"><span>Supprimer</span></div>
+                </div>
+                {# Update #}
+                <div class="ingredient-update-fields active" data-id="{{ ingredient["id"] }}">
+                    <input type="text" class="ingredient-update-name" value="{{ ingredient["name"] }}" data-id="{{ ingredient["id"] }}" placeholder="Nom de l'ingrédient">
+                    <input type="text" class="ingredient-update-price" value="{{ ingredient["price"] }}" data-id="{{ ingredient["id"] }}" placeholder="Prix de l'ingrédient">
+                </div>
+                <div class="ingredient-update-actions active" data-id="{{ ingredient["id"] }}">
+                    <div class="ingredient-update-edit" data-id="{{ ingredient["id"] }}" data-name="{{ ingredient["name"] }}" data-price="{{ ingredient["price"] }}"><span>Modifier</span></div>
+                    <div class="ingredient-update-trash" data-id="{{ ingredient["id"] }}" data-name="{{ ingredient["name"] }}" data-price="{{ ingredient["price"] }}"><span>Annuler</span></div>
                 </div>
             </li>
             {% endfor %}
