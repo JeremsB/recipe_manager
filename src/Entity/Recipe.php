@@ -59,7 +59,7 @@ class Recipe
     private $ingredients;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\RecipeImage", mappedBy="recipe")
+     * @ORM\OneToMany(targetEntity="App\Entity\RecipeImage", mappedBy="recipe", cascade={"remove"})
      */
     private $images;
 

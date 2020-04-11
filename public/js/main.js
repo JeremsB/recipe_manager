@@ -418,6 +418,39 @@ class ListIngredient {
     }
 }
 
+class Recipe {
+    constructor(recipeDelete) {
+        this.recipeDelete = recipeDelete;
+
+        if(this.recipeDelete) {
+            this.onClickRecipeDelete();
+        }
+    }
+
+    onClickRecipeDelete() {
+        this.recipeDelete.map((recipeDelete) => {
+            recipeDelete.addEventListener('click', event => {
+                event.preventDefault();
+                
+                if (confirm("Voulez vous supprimer la recette ?")) {
+                    // Delete on list
+                    var item = document.querySelector(`div.recipe.card[data-id="${recipeDelete.dataset.id}"]`);
+                    item.remove();
+
+                    // Delete on database
+                    const url = `/recipe/delete/${recipeDelete.dataset.id}`;
+
+                    console.log(recipeDelete.dataset.id);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.send();
+                }
+            })
+        })
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const list = document.querySelector('.ingredients');
     const edit = [].slice.call(document.querySelectorAll('.ingredient-edit'));
@@ -431,5 +464,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if(list && edit && trash && add && cancelAdding && addAdding && updateEdit && updateTrash) {
         new ListIngredient(list, edit, trash, add, cancelAdding, addAdding, updateEdit, updateTrash);
+    }
+
+    const recipeDelete = [].slice.call(document.querySelectorAll('.recipe-delete'));
+
+    if(recipeDelete) {
+        new Recipe(recipeDelete);
     }
 })
