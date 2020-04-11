@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello RecipeController!{% endblock %}
+
+{% block body %}
+<div class="container mt-5 recipe-header">
+    <h1>Mes recettes</h1>
+    <a href="#" class="btn btn-success">Ajouter un ingrédient</a>
+</div>
+<div class="container mt-5">
+    <div class="recipes">
+        <div class="card recipe">
+            <img class="card-img-top" src="https://via.placeholder.com/350x250">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Modifier</a>
+                <a href="#" class="btn btn-danger">Supprimer</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
