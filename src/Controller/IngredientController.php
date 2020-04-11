@@ -64,7 +64,7 @@ class IngredientController extends AbstractController
      * @Route("/ingredient/create/{name}/{price}", name="create_ingredient")
      *
      * @param [string] $name
-     * @param [int] $price
+     * @param [string] $price
      * @param EntityManagerInterface $manager
      * @param IngredientRepository $ingredientRepo
      * @return Response
@@ -81,6 +81,46 @@ class IngredientController extends AbstractController
         ], 403);
 
         $ingredient = new Ingredient();
+
+        $ingredient->setUser($user);
+        $ingredient->setName(IngredientController::decode($name));
+        $ingredient->setPrice((float) IngredientController::decode($price));
+
+        $manager->persist($ingredient);
+        $manager->flush();
+
+        return $this->json([
+            'message'   => 'Success',
+            'id'        => $ingredient->getId(),
+            'name'      => $ingredient->getName(),
+            'price'     => $ingredient->getPrice()
+        ], 200);
+    }
+
+    /**
+     * Update an ingredient
+     * 
+     * @Route("/ingredient/update/{id}/{name}/{price}", name="update_ingredient")
+     *
+     * @param [id] $id
+     * @param [string] $name
+     * @param [string] $price
+     * @param EntityManagerInterface $manager
+     * @param IngredientRepository $ingredientRepo
+     * @return Response
+     */
+    public function update($id, $name, $price, EntityManagerInterface $manager, IngredientRepository $ingredientRepo) : Response {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        $ingredient = $ingredientRepo->findOneBy(['id' => $id]);
 
         $ingredient->setUser($user);
         $ingredient->setName(IngredientController::decode($name));

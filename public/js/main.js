@@ -3,14 +3,25 @@
  */
 
 class ListIngredient {
-    constructor(list, trash, add, cancelAdding, addAdding) {
+    constructor(list, edit, trash, add, cancelAdding, addAdding, updateEdit, updateTrash) {
         this.list = list;
         
         if(this.list) {
+            this.edit = edit,
             this.trash = trash;
             this.add = add;
-            this.cancelAdding = cancelAdding;
-            this.addAdding = addAdding;
+
+            if(this.edit) {
+                this.listenOnClickEdit();
+
+                this.updateEdit = updateEdit;
+                this.updateTrash = updateTrash;
+
+                if(this.updateEdit && this.updateTrash) {
+                    this.listenOnClickUpdateEdit();
+                    this.listenOnClickUpdateTrash();
+                }
+            }
 
             if(this.trash) {
                 this.listenOnClickTrash();
@@ -18,6 +29,8 @@ class ListIngredient {
 
             if(this.add) {
                 this.listenOnCLickAdd();
+                this.cancelAdding = cancelAdding;
+                this.addAdding = addAdding;
 
                 if(this.cancelAdding && this.addAdding) {
                     this.listenOnClickCancelAdding();
@@ -25,6 +38,94 @@ class ListIngredient {
                 }
             }
         }  
+    }
+
+    listenOnClickEdit() {
+        this.edit.map((edit) => {
+            edit.addEventListener('click', event => {
+                event.preventDefault();
+
+                var ingredient = document.querySelector(`div.ingredient[data-id="${edit.dataset.id}"]`);
+                var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${edit.dataset.id}"]`);
+                var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${edit.dataset.id}"]`);
+                var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${edit.dataset.id}"]`);
+
+                ingredient.classList.add('active');
+                ingredientActions.classList.add('active');
+                ingredientUpdateFields.classList.remove('active');
+                ingredientUpdateActions.classList.remove('active');
+            })
+        })
+    }
+
+    listenOnClickUpdateEdit() {
+        this.updateEdit.map((updateEdit) => {
+            updateEdit.addEventListener('click', event => {
+                event.preventDefault();
+
+                var name = document.querySelector(`.ingredient-update-name[data-id="${updateEdit.dataset.id}"]`).value;
+                var price = document.querySelector(`.ingredient-update-price[data-id="${updateEdit.dataset.id}"]`).value;
+
+                if (confirm("Voulez vous vraiment modifier l'ingrédient ?")) {
+                    var ingredient = document.querySelector(`div.ingredient[data-id="${updateEdit.dataset.id}"]`);
+                    var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${updateEdit.dataset.id}"]`);
+                    var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${updateEdit.dataset.id}"]`);
+                    var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${updateEdit.dataset.id}"]`);
+
+                    ingredient.classList.remove('active');
+                    ingredientActions.classList.remove('active');
+                    ingredientUpdateFields.classList.add('active');
+                    ingredientUpdateActions.classList.add('active');
+
+                    ingredient.innerHTML = `${name} au prix de ${price}`;
+
+                    // Encode
+                    var encodedName = encodeURIComponent(window.btoa(name));
+                    var encodedPrice = encodeURIComponent(window.btoa(price));
+
+                    // Update on database
+                    const url = `/ingredient/update/${updateEdit.dataset.id}/${encodedName}/${encodedPrice}`;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.send();
+                }else {
+                    document.querySelector(`.ingredient-update-name[data-id="${updateEdit.dataset.id}"]`).value = updateEdit.dataset.name;
+                    document.querySelector(`.ingredient-update-price[data-id="${updateEdit.dataset.id}"]`).value = updateEdit.dataset.price;
+
+                    var ingredient = document.querySelector(`div.ingredient[data-id="${updateEdit.dataset.id}"]`);
+                    var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${updateEdit.dataset.id}"]`);
+                    var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${updateEdit.dataset.id}"]`);
+                    var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${updateEdit.dataset.id}"]`);
+
+                    ingredient.classList.remove('active');
+                    ingredientActions.classList.remove('active');
+                    ingredientUpdateFields.classList.add('active');
+                    ingredientUpdateActions.classList.add('active');
+                }
+            })
+        })
+    }
+
+    listenOnClickUpdateTrash() {
+        this.updateTrash.map((updateTrash) => {
+            updateTrash.addEventListener('click', event => {
+                event.preventDefault();
+
+                document.querySelector(`.ingredient-update-name[data-id="${updateTrash.dataset.id}"]`).value = updateTrash.dataset.name;
+                document.querySelector(`.ingredient-update-price[data-id="${updateTrash.dataset.id}"]`).value = updateTrash.dataset.price;
+
+                var ingredient = document.querySelector(`div.ingredient[data-id="${updateTrash.dataset.id}"]`);
+                var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${updateTrash.dataset.id}"]`);
+                var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${updateTrash.dataset.id}"]`);
+                var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${updateTrash.dataset.id}"]`);
+
+                ingredient.classList.remove('active');
+                ingredientActions.classList.remove('active');
+                ingredientUpdateFields.classList.add('active');
+                ingredientUpdateActions.classList.add('active');
+            })
+        })
     }
 
     listenOnClickTrash() {
@@ -51,6 +152,9 @@ class ListIngredient {
     listenOnCLickAdd() {
         this.add.addEventListener('click', event => {
             event.preventDefault();
+
+            document.querySelector('.ingredient-adding-name').value = "";
+            document.querySelector('.ingredient-adding-price').value = "";
 
             var liAdd = document.querySelector('.ingredient-add');
             var liAdding = document.querySelector('.ingredient-adding');
@@ -98,34 +202,89 @@ class ListIngredient {
                     li.classList.add('ingredient');
                     li.dataset.id = id;
 
+                    // Div ingredient
                     var divIngredient = document.createElement('div');
                     divIngredient.classList.add('ingredient');
+                    divIngredient.dataset.id = id;
                     divIngredient.innerHTML = response["name"] + " au prix de " + response["price"];
 
-                    var divIngredientActions = document.createElement('div');
-                    divIngredientActions.classList.add('ingredient-actions');
-
+                    // Div actions
                     var divIngredientEdit = document.createElement('div');
                     divIngredientEdit.classList.add('ingredient-edit');
                     divIngredientEdit.dataset.id = id;
                     var spanIngredientEdit = document.createElement('span');
                     spanIngredientEdit.innerHTML = "Modifier";
-                    divIngredientEdit.appendChild(spanIngredientEdit)
+                    divIngredientEdit.appendChild(spanIngredientEdit);
 
                     var divIngredientTrash = document.createElement('div');
                     divIngredientTrash.classList.add('ingredient-trash');
                     divIngredientTrash.dataset.id = id;
                     var spanIngredientTrash = document.createElement('span');
                     spanIngredientTrash.innerHTML = "Supprimer";
-                    divIngredientTrash.appendChild(spanIngredientTrash)
+                    divIngredientTrash.appendChild(spanIngredientTrash);
 
+                    var divIngredientActions = document.createElement('div');
+                    divIngredientActions.dataset.id = id;
+                    divIngredientActions.classList.add('ingredient-actions');
+
+                    // Div ingredient update fields
+                    var inputUpdateName = document.createElement('input');
+                    inputUpdateName.type = "text";
+                    inputUpdateName.classList.add('ingredient-update-name');
+                    inputUpdateName.value = response["name"];
+                    inputUpdateName.dataset.id = id;
+                    inputUpdateName.placeholder = "Nom de l'ingrédient";
+
+                    var inputUpdatePrice = document.createElement('input');
+                    inputUpdatePrice.type = "text";
+                    inputUpdatePrice.classList.add('ingredient-update-price');
+                    inputUpdatePrice.value = response["price"];
+                    inputUpdatePrice.dataset.id = id;
+                    inputUpdatePrice.placeholder = "Prix de l'ingrédient";
+
+                    var divUpdateFields = document.createElement('div');
+                    divUpdateFields.classList.add('ingredient-update-fields');
+                    divUpdateFields.classList.add('active');
+                    divUpdateFields.dataset.id = id;
+
+                    // Div ingredient update actions
+                    var divUpdateEdit = document.createElement('div');
+                    divUpdateEdit.classList.add('ingredient-update-edit');
+                    divUpdateEdit.dataset.id = id;
+                    divUpdateEdit.dataset.name = response["name"];
+                    divUpdateEdit.dataset.price = response["price"];
+                    var spanUpdateEdit = document.createElement('span');
+                    spanUpdateEdit.innerHTML = "Modifier";
+                    divUpdateEdit.appendChild(spanUpdateEdit);
+
+                    var divUpdateTrash = document.createElement('div');
+                    divUpdateTrash.classList.add('ingredient-update-trash');
+                    divUpdateTrash.dataset.id = id;
+                    divUpdateTrash.dataset.name = response["name"];
+                    divUpdateTrash.dataset.price = response["price"];
+                    var spanUpdateTrash = document.createElement('span');
+                    spanUpdateTrash.innerHTML = "Annuler";
+                    divUpdateTrash.appendChild(spanUpdateTrash);
+
+                    var divUpdateActions = document.createElement('div');
+                    divUpdateActions.classList.add('ingredient-update-actions');
+                    divUpdateActions.classList.add('active');
+                    divUpdateActions.dataset.id = id;
+
+                    // Append children
                     divIngredientActions.appendChild(divIngredientEdit);
                     divIngredientActions.appendChild(divIngredientTrash);
+                    divUpdateFields.appendChild(inputUpdateName);
+                    divUpdateFields.appendChild(inputUpdatePrice);
+                    divUpdateActions.appendChild(divUpdateEdit);
+                    divUpdateActions.appendChild(divUpdateTrash);
                     li.appendChild(divIngredient);
                     li.appendChild(divIngredientActions);
+                    li.appendChild(divUpdateFields);
+                    li.appendChild(divUpdateActions);
 
                     var list = document.querySelector('.ingredients');
-                    list.insertBefore(li, document.querySelector('li.ingredient:nth-child(4)'));
+                    list.insertBefore(li, document.querySelector('li.ingredient:nth-child(3)'));
 
                     // Reset scrool
                     list.scrollTop = 0;
@@ -146,6 +305,82 @@ class ListIngredient {
                             xhr.open('GET', url);
                             xhr.send();
                         }
+                    })
+
+                    divIngredientEdit.addEventListener('click', event => {
+                        event.preventDefault();
+        
+                        var ingredient = document.querySelector(`div.ingredient[data-id="${divIngredientEdit.dataset.id}"]`);
+                        var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${divIngredientEdit.dataset.id}"]`);
+                        var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${divIngredientEdit.dataset.id}"]`);
+                        var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${divIngredientEdit.dataset.id}"]`);
+        
+                        ingredient.classList.add('active');
+                        ingredientActions.classList.add('active');
+                        ingredientUpdateFields.classList.remove('active');
+                        ingredientUpdateActions.classList.remove('active');
+                    })
+
+                    divUpdateEdit.addEventListener('click', event => {
+                        event.preventDefault();
+        
+                        var name = document.querySelector(`.ingredient-update-name[data-id="${divUpdateEdit.dataset.id}"]`).value;
+                        var price = document.querySelector(`.ingredient-update-price[data-id="${divUpdateEdit.dataset.id}"]`).value;
+        
+                        if (confirm("Voulez vous vraiment modifier l'ingrédient ?")) {
+                            var ingredient = document.querySelector(`div.ingredient[data-id="${divUpdateEdit.dataset.id}"]`);
+                            var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${divUpdateEdit.dataset.id}"]`);
+                            var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${divUpdateEdit.dataset.id}"]`);
+                            var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${divUpdateEdit.dataset.id}"]`);
+        
+                            ingredient.classList.remove('active');
+                            ingredientActions.classList.remove('active');
+                            ingredientUpdateFields.classList.add('active');
+                            ingredientUpdateActions.classList.add('active');
+        
+                            ingredient.innerHTML = `${name} au prix de ${price}`;
+        
+                            // Encode
+                            var encodedName = encodeURIComponent(window.btoa(name));
+                            var encodedPrice = encodeURIComponent(window.btoa(price));
+        
+                            // Update on database
+                            const url = `/ingredient/update/${divUpdateEdit.dataset.id}/${encodedName}/${encodedPrice}`;
+        
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('GET', url);
+                            xhr.send();
+                        }else {
+                            document.querySelector(`.ingredient-update-name[data-id="${divUpdateEdit.dataset.id}"]`).value = divUpdateEdit.dataset.name;
+                            document.querySelector(`.ingredient-update-price[data-id="${divUpdateEdit.dataset.id}"]`).value = divUpdateEdit.dataset.price;
+        
+                            var ingredient = document.querySelector(`div.ingredient[data-id="${divUpdateEdit.dataset.id}"]`);
+                            var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${divUpdateEdit.dataset.id}"]`);
+                            var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${divUpdateEdit.dataset.id}"]`);
+                            var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${divUpdateEdit.dataset.id}"]`);
+        
+                            ingredient.classList.remove('active');
+                            ingredientActions.classList.remove('active');
+                            ingredientUpdateFields.classList.add('active');
+                            ingredientUpdateActions.classList.add('active');
+                        }
+                    })
+
+                    divUpdateTrash.addEventListener('click', event => {
+                        event.preventDefault();
+        
+                        document.querySelector(`.ingredient-update-name[data-id="${divUpdateTrash.dataset.id}"]`).value = divUpdateTrash.dataset.name;
+                        document.querySelector(`.ingredient-update-price[data-id="${divUpdateTrash.dataset.id}"]`).value = divUpdateTrash.dataset.price;
+        
+                        var ingredient = document.querySelector(`div.ingredient[data-id="${divUpdateTrash.dataset.id}"]`);
+                        var ingredientActions = document.querySelector(`.ingredient-actions[data-id="${divUpdateTrash.dataset.id}"]`);
+                        var ingredientUpdateFields = document.querySelector(`.ingredient-update-fields[data-id="${divUpdateTrash.dataset.id}"]`);
+                        var ingredientUpdateActions = document.querySelector(`.ingredient-update-actions[data-id="${divUpdateTrash.dataset.id}"]`);
+        
+                        ingredient.classList.remove('active');
+                        ingredientActions.classList.remove('active');
+                        ingredientUpdateFields.classList.add('active');
+                        ingredientUpdateActions.classList.add('active');
                     })
                     
                     // Add class active on elements
@@ -185,13 +420,16 @@ class ListIngredient {
 
 document.addEventListener('DOMContentLoaded', function() {
     const list = document.querySelector('.ingredients');
+    const edit = [].slice.call(document.querySelectorAll('.ingredient-edit'));
     const trash = [].slice.call(document.querySelectorAll('.ingredient-trash'));
     const add = document.querySelector('.ingredient-add');
 
     const cancelAdding = document.querySelector('.ingredient-adding-cancel');
     const addAdding = document.querySelector('.ingredient-adding-add');
+    const updateEdit = [].slice.call(document.querySelectorAll('.ingredient-update-edit'));
+    const updateTrash = [].slice.call(document.querySelectorAll('.ingredient-update-trash'));
 
-    if(list && trash && add && cancelAdding && addAdding) {
-        new ListIngredient(list, trash, add, cancelAdding, addAdding);
+    if(list && edit && trash && add && cancelAdding && addAdding && updateEdit && updateTrash) {
+        new ListIngredient(list, edit, trash, add, cancelAdding, addAdding, updateEdit, updateTrash);
     }
 })
