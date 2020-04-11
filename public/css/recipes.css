@@ -1,0 +1,24 @@
+.recipes {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin: 1rem;
+}
+
+.recipe-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.time-difficulty-price {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card.recipe {
+    width: 25rem;
+    margin: 2rem;
+}
