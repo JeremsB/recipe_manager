@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Recipe;
 use App\Repository\RecipeRepository;
 use App\Controller\IngredientController;
+use App\Entity\RecipeImage;
 use App\Repository\IngredientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RecipeImageRepository;
@@ -82,13 +83,14 @@ class RecipeController extends AbstractController
     /**
      * Create new recipe
      * 
-     * @Route("/recipe/create/{encodedIngredientsId}/{encodedData}", name="create_recipe")
+     * @Route("/recipe/create/{encodedIngredientsId}/{encodedData}/{encodedUrlsData}", name="create_recipe")
      *
      * @param [type] $encodedIngredientsId
      * @param [type] $encodedData
+     * @param [type] $encodedUrlsData
      * @return Response
      */
-    public function create($encodedIngredientsId, $encodedData, EntityManagerInterface $manager, IngredientRepository $ingredientRepo) : Response {
+    public function create($encodedIngredientsId, $encodedData, $encodedUrlsData, EntityManagerInterface $manager, IngredientRepository $ingredientRepo) : Response {
         $user = $this->getUser();
 
         /**
@@ -102,6 +104,7 @@ class RecipeController extends AbstractController
         // Decode ingredients id and data
         $ingredientsId = json_decode(IngredientController::decode($encodedIngredientsId));
         $data = json_decode(IngredientController::decode($encodedData));
+        $urlsData = json_decode(IngredientController::decode($encodedUrlsData));
 
         //Create and set new recipe
         $recipe = new Recipe();
@@ -114,10 +117,21 @@ class RecipeController extends AbstractController
         $recipe->setShared($data->shared);
         $recipe->setUser($user);
         
-        // Recup ingredients by id
+        // Recup ingredients by id and set them for recipe
         foreach ($ingredientsId as $id) {
             $ingredient = $ingredientRepo->findOneBy([ 'id' => (int) $id ]);
             $recipe->addIngredient($ingredient);
+        }
+
+        // Create new images and set them for recipe
+        foreach ($urlsData as $urlData) {
+            $recipeImage = new RecipeImage();
+            $recipeImage->setUrl($urlData);
+
+            $manager->persist($recipeImage);
+            $manager->flush();
+            
+            $recipe->addImage($recipeImage);
         }
 
         $manager->persist($recipe);

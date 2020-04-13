@@ -22,7 +22,7 @@ class RecipeImage
     private $url;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Recipe", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Recipe", inversedBy="images", cascade={"persist"}))
      */
     private $recipe;
 

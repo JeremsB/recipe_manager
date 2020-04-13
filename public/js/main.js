@@ -546,6 +546,7 @@ class AddRecipe {
             ingredients.forEach(element => {
                 price = price + parseFloat(element.dataset.price);
             })
+            var urls = [].slice.call(document.querySelectorAll('.form-control.image'));
 
             // Get all ID of selected ingrdients
             var ingredientsId = [];
@@ -563,22 +564,31 @@ class AddRecipe {
                 'price': price
             }
 
+            // Get all url of urls fields
+            var urlsData = [];
+            urls.forEach(element => {
+                element.value.length == 0 ? '' : urlsData.push(element.value);
+            })
+            console.log(urlsData);
+
             var jsonIngredientsId = JSON.stringify(ingredientsId);
             var jsonData = JSON.stringify(data);
+            var jsonUrlsData = JSON.stringify(urlsData);
 
             // Encode all data
             var encodedIngredientsId = encodeURIComponent(window.btoa(jsonIngredientsId));
             var encodedData = encodeURIComponent(window.btoa(jsonData));
+            var encodedUrlsData = encodeURIComponent(window.btoa(jsonUrlsData));
 
             // Create recipe on database
-            const url = `/recipe/create/${encodedIngredientsId}/${encodedData}`;
+            const url = `/recipe/create/${encodedIngredientsId}/${encodedData}/${encodedUrlsData}`;
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url);
             xhr.send();
 
             // Go to list of all recipes
-            window.location.href = `/recipes`;
+            // window.location.href = `/recipes`;
         })
     }
 }
