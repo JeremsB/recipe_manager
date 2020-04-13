@@ -541,7 +541,8 @@ class AddRecipe {
             var instructions = this.addRecipeInstructions.value;
             var time = this.addRecipeTime.value;
             var difficulty = this.addRecipeDifficulty.value;
-            var shared = this.addRecipeShared.value === "checked" ? 1 : 0;
+            var shared = this.addRecipeShared.checked;
+            console.log(shared);
             var price = 0;
             ingredients.forEach(element => {
                 price = price + parseFloat(element.dataset.price);
@@ -588,7 +589,7 @@ class AddRecipe {
             xhr.send();
 
             // Go to list of all recipes
-            // window.location.href = `/recipes`;
+            window.location.href = `/recipes`;
         })
     }
 }
