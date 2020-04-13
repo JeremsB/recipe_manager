@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello RecipeController!{% endblock %}
+
+{% block body %}
+{{ dump(ingredients) }}
+<div class="container mt-5">
+    <div class="form-group">
+        <h1 class="title">{{ recipe.name }}</h1>
+    </div>
+    <div class="form-group recipe">
+        {% for image in recipeImage %}
+            <img src="{{ image.url }}" alt="">
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <label for="">Ingrédient(s) utilisé(s)</label>
+        <ul>
+            {% for ingredient in ingredients %}
+            <li>{{ ingredient.name }} au prix de {{ ingredient.price }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="form-group">
+        <p>{{ recipe.instructions }}</p>
+    </div>
+    <div class="form-group">
+        <p>Temps de préparation : {{ recipe.time }}</p>
+    </div>
+    <div class="form-group">
+        <p>Difficulté : {{ recipe.difficulty }}/5</p>
+    </div>
+    <div class="form-group">
+        <p>Prix : {{ recipe.price }}</p>
+    </div>
+    <div class="form-group">
+        <p>Paratagé à la communauté ? : {{ recipe.shared ? 'Oui' : 'Non' }}</p>
+    </div>
+</div>
+{% endblock %}
