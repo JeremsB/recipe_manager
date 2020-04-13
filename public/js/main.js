@@ -451,6 +451,148 @@ class Recipe {
     }
 }
 
+class AddRecipe {
+    constructor(addRecipeName, addRecipeIngredients, addRecipeInstructions, addRecipeTime, addRecipeDifficulty, addRecipeShared, addRecipePrice, addRecipeSubmit) {
+        this.addRecipeName = addRecipeName;
+        this.addRecipeIngredients = addRecipeIngredients;
+        this.addRecipeInstructions = addRecipeInstructions;
+        this.addRecipeTime = addRecipeTime;
+        this.addRecipeDifficulty = addRecipeDifficulty;
+        this.addRecipeShared = addRecipeShared;
+        this.addRecipePrice = addRecipePrice;
+        this.addRecipeSubmit = addRecipeSubmit;
+
+        if(this.addRecipeIngredients) {
+            this.listenOnChangeSelectIngredients();
+        }
+
+        if(this.addRecipeSubmit) {
+            this.listenOnClickRecipeSubmit();
+        }
+    }
+
+    listenOnChangeSelectIngredients() {
+        this.addRecipeIngredients.addEventListener('change', event => {
+            event.preventDefault();
+
+            if(confirm("Ajouter cet ingrédient ?")) {
+                var optionSelected = document.querySelectorAll('.option-ingredients')[this.addRecipeIngredients.value];
+                optionSelected.disabled = "disabled";
+
+                // Set price
+                this.addRecipePrice.value = parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price);
+
+                // Construct li
+                var div = document.createElement('div');
+                div.innerHTML = optionSelected.dataset.name;
+
+                var a = document.createElement('a');
+                a.classList.add('btn');
+                a.classList.add('btn-danger');
+                a.classList.add('ml-3');
+                a.href = "#";
+                a.innerHTML = " X ";
+                a.dataset.id = optionSelected.dataset.id;
+
+                var divActions = document.createElement('div');
+                divActions.appendChild(a);
+                divActions.dataset.id = optionSelected.dataset.id;
+                divActions.dataset.price = optionSelected.dataset.price;
+
+                var li = document.createElement('li');
+                li.classList.add('choosen-ingredient');
+                li.dataset.id = optionSelected.dataset.id;
+                li.dataset.name = optionSelected.dataset.name;
+                li.dataset.price = optionSelected.dataset.price;
+                li.appendChild(div);
+                li.appendChild(divActions);
+
+                var list = document.querySelector('ul.choosen-ingredients');
+                list.appendChild(li);
+
+                divActions.addEventListener('click', event => {
+                    event.preventDefault();
+                    
+                    if (confirm("Voulez vous supprimer cet ingrédient ?")) {
+                        // Remove from list
+                        var li = document.querySelector(`.choosen-ingredient[data-id="${divActions.dataset.id}"]`);
+                        li.remove();
+
+                        // Set price
+                        this.addRecipePrice.value = parseFloat(this.addRecipePrice.value) - parseFloat(divActions.dataset.price);
+
+                        // Remove disabled
+                        var optionSelected = document.querySelector(`.option-ingredients[data-id="${divActions.dataset.id}"]`);
+                        console.log(optionSelected);
+                        optionSelected.disabled = "";
+                    }
+                })
+            }
+        })
+    }
+
+    listenOnClickRecipeSubmit() {
+        this.addRecipeSubmit.addEventListener('click', event => {
+            event.preventDefault();
+            
+            // Get value of all fields
+            var name = this.addRecipeName.value;
+            var ingredients = [].slice.call(document.querySelectorAll('.choosen-ingredient'));
+            var instructions = this.addRecipeInstructions.value;
+            var time = this.addRecipeTime.value;
+            var difficulty = this.addRecipeDifficulty.value;
+            var shared = this.addRecipeShared.value === "checked" ? 1 : 0;
+            var price = 0;
+            ingredients.forEach(element => {
+                price = price + parseFloat(element.dataset.price);
+            })
+            var urls = [].slice.call(document.querySelectorAll('.form-control.image'));
+
+            // Get all ID of selected ingrdients
+            var ingredientsId = [];
+            ingredients.forEach(element => {
+                ingredientsId.push(element.dataset.id)
+            })
+
+            // Get all value of selected fields
+            var data = {
+                'name': name,
+                'instructions': instructions,
+                'time': time,
+                'difficulty': difficulty,
+                'shared': shared,
+                'price': price
+            }
+
+            // Get all url of urls fields
+            var urlsData = [];
+            urls.forEach(element => {
+                element.value.length == 0 ? '' : urlsData.push(element.value);
+            })
+            console.log(urlsData);
+
+            var jsonIngredientsId = JSON.stringify(ingredientsId);
+            var jsonData = JSON.stringify(data);
+            var jsonUrlsData = JSON.stringify(urlsData);
+
+            // Encode all data
+            var encodedIngredientsId = encodeURIComponent(window.btoa(jsonIngredientsId));
+            var encodedData = encodeURIComponent(window.btoa(jsonData));
+            var encodedUrlsData = encodeURIComponent(window.btoa(jsonUrlsData));
+
+            // Create recipe on database
+            const url = `/recipe/create/${encodedIngredientsId}/${encodedData}/${encodedUrlsData}`;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.send();
+
+            // Go to list of all recipes
+            // window.location.href = `/recipes`;
+        })
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const list = document.querySelector('.ingredients');
     const edit = [].slice.call(document.querySelectorAll('.ingredient-edit'));
@@ -470,5 +612,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if(recipeDelete) {
         new Recipe(recipeDelete);
+    }
+
+    const addRecipeName = document.querySelector('.form-control.name');
+    const addRecipeIngredients = document.querySelector('.form-control.recipe-ingredients');
+    const addRecipeInstructions = document.querySelector('.form-control.instructions');
+    const addRecipeTime = document.querySelector('.form-control.time');
+    const addRecipeDifficulty = document.querySelector('.form-control.difficulty');
+    const addRecipeShared = document.querySelector('.form-check-input.shared');
+    const addRecipePrice = document.querySelector('.form-control.price');
+    const addRecipeSubmit = document.querySelector('.form-control.submit');
+
+    if(addRecipeName && addRecipeIngredients && addRecipeInstructions && addRecipeTime && addRecipeDifficulty && addRecipeShared && addRecipePrice && addRecipeSubmit) {
+        new AddRecipe(addRecipeName, addRecipeIngredients, addRecipeInstructions, addRecipeTime, addRecipeDifficulty, addRecipeShared, addRecipePrice, addRecipeSubmit);
     }
 })

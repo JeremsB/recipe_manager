@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Recipe;
 use App\Repository\RecipeRepository;
+use App\Controller\IngredientController;
+use App\Entity\RecipeImage;
+use App\Repository\IngredientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RecipeImageRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,6 +81,68 @@ class RecipeController extends AbstractController
     }
 
     /**
+     * Create new recipe
+     * 
+     * @Route("/recipe/create/{encodedIngredientsId}/{encodedData}/{encodedUrlsData}", name="create_recipe")
+     *
+     * @param [type] $encodedIngredientsId
+     * @param [type] $encodedData
+     * @param [type] $encodedUrlsData
+     * @return Response
+     */
+    public function create($encodedIngredientsId, $encodedData, $encodedUrlsData, EntityManagerInterface $manager, IngredientRepository $ingredientRepo) : Response {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        // Decode ingredients id and data
+        $ingredientsId = json_decode(IngredientController::decode($encodedIngredientsId));
+        $data = json_decode(IngredientController::decode($encodedData));
+        $urlsData = json_decode(IngredientController::decode($encodedUrlsData));
+
+        //Create and set new recipe
+        $recipe = new Recipe();
+
+        $recipe->setName($data->name);
+        $recipe->setInstructions($data->instructions);
+        $recipe->setTime($data->time);
+        $recipe->setDifficulty($data->difficulty);
+        $recipe->setPrice($data->price);
+        $recipe->setShared($data->shared);
+        $recipe->setUser($user);
+        
+        // Recup ingredients by id and set them for recipe
+        foreach ($ingredientsId as $id) {
+            $ingredient = $ingredientRepo->findOneBy([ 'id' => (int) $id ]);
+            $recipe->addIngredient($ingredient);
+        }
+
+        // Create new images and set them for recipe
+        foreach ($urlsData as $urlData) {
+            $recipeImage = new RecipeImage();
+            $recipeImage->setUrl($urlData);
+
+            $manager->persist($recipeImage);
+            $manager->flush();
+            
+            $recipe->addImage($recipeImage);
+        }
+
+        $manager->persist($recipe);
+        $manager->flush();
+
+        return $this->json([
+            'message'        => 'Success'
+        ], 200);
+    }
+
+    /**
      * Delete one recipe
      * 
      * @Route("/recipe/delete/{id}", name="delete_recipe")
@@ -108,26 +174,39 @@ class RecipeController extends AbstractController
     }
 
     /**
-     * Delete images of a recipe
+     * View create recipe and get all ingredients
      * 
-     * @Route("/recipe/deleteImages/{id}", name="delete_images_recipe")
+     * @Route("/create-recipe", name="create_recipe_view")
      *
-     * @param [int] $idRecipe
-     * @param EntityManagerInterface $manager
-     * @param RecipeImageRepository $imageRecipesRepo
-     * @return Response
+     * @return void
      */
-    public function deleteImages($idRecipe, EntityManagerInterface $manager, RecipeImageRepository $imageRecipesRepo) : Response {
-        $recipeImages = $imageRecipesRepo->findBy(['id' => (int) $idRecipe]);
+    public function createView(IngredientRepository $ingredientRepo) {
+        $user = $this->getUser();
 
-        foreach ($recipeImages as $recipeImage) {
-            $manager->remove($recipeImage);
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        $ingredientsResponse = $ingredientRepo->findBy(['user' => (int) $user->getId()]);
+
+        $ingredients = [];
+        /**
+         * Put the relevant information in a array
+         */
+        foreach ($ingredientsResponse as $ingredientResponse) {
+            array_push($ingredients, [
+                'id' => $ingredientResponse->getId(),
+                'name' => $ingredientResponse->getName(),
+                'price' => $ingredientResponse->getPrice()
+            ]);
         }
 
-        $manager->flush();
-
-        return $this->json([
-            'message'        => 'Success'
-        ], 200);
+        return $this->render('recipe/create-recipe.html.twig', [
+            'ingredients' => $ingredients
+        ]);
     }
 }
