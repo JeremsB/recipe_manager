@@ -81,6 +81,71 @@ class RecipeController extends AbstractController
     }
 
     /**
+     * Read shared recipes and set template
+     * 
+     * @Route("/shared-recipes", name="shared_recipes")
+     *
+     * @param RecipeRepository $recipeRepo
+     * @param RecipeImageRepository $recipeImageRepo
+     * @return void
+     */
+    public function sharedRecipes(RecipeRepository $recipeRepo, RecipeImageRepository $recipeImageRepo)
+    {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        $userId = $user->getId();
+
+        /**
+         * Get all ingredients for current user
+         */
+        $recipesResponse = $recipeRepo->findBy([
+            'shared' => true
+        ]);
+
+        /**
+         * Get all images about current recipe
+         */
+        $recipeImagesResponse = $recipeImageRepo->findBy([
+            'recipe' => $recipesResponse
+        ]);
+
+        $recipes = [];
+
+        /**
+         * Put the relevant information in a array
+         */
+        foreach ($recipesResponse as $index => $recipeResponse) {
+            array_push($recipes, [
+                'id' => $recipeResponse->getId(),
+                'name' => $recipeResponse->getName(),
+                'instructions' => $recipeResponse->getInstructions(),
+                'time' => $recipeResponse->getTime(),
+                'difficulty' => $recipeResponse->getDifficulty(),
+                'price' => $recipeResponse->getPrice(),
+                'shared' => $recipeResponse->getShared(),
+            ]);
+            foreach ($recipeImagesResponse as $recipeImageResponse) {
+                array_push($recipes[$index], [
+                    'id' => $recipeImageResponse->getId(),
+                    'url' => $recipeImageResponse->getUrl(),
+                ]);
+            }
+        }
+
+        return $this->render('recipe/shared-recipes.html.twig', [
+            'recipes' =>  $recipes
+        ]);
+    }
+
+    /**
      * Create new recipe
      * 
      * @Route("/recipe/create/{encodedIngredientsId}/{encodedData}/{encodedUrlsData}", name="create_recipe")
