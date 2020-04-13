@@ -59,11 +59,16 @@ h1 {
 
 /* Navbar */
 nav.navbar {
-    height: 10h;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .navbar .logo {
     width: 100px;
+}
+
+.navbar {
+    border-radius: 25px 25px 55px 45px/55px 55px 25px 25px !important;
 }
 
 /* Form */

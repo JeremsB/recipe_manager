@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello RecipeController!{% endblock %}
+{% block title %}Recettes{% endblock %}
 
 {% block body %}
 <div class="container mt-5 recipe-header">
     <h1>Mes recettes</h1>
-    <a href="#" class="btn btn-success">Ajouter un ingrédient</a>
+    <a href="/create-recipe" class="btn btn-success" style="line-height: 2.5;">Créer une recette</a>
 </div>
 <div class="container mt-5">
     <div class="recipes">
         {% for recipe in recipes %}
         <div class="card recipe" data-id="{{ recipe.id }}">
-            <img class="card-img-top" src="https://via.placeholder.com/350x250">
+            <img style="border-radius: 3px 3px 0px 0px/25px 25px 25px 5px;" src="https://via.placeholder.com/350x250">
             <div class="card-body">
                 <h5 class="card-title">{{ recipe.name }}</h5>
                 <p class="card-text">{{ recipe.instructions }}</p>

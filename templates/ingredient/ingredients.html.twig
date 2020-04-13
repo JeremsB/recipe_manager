@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello IngredientController!{% endblock %}
+{% block title %}Ingrédients{% endblock %}
 
 {% block body %}
     <div class="container mt-5">
         <h1>Les ingrédients</h1>
-        <ul class="ingredients list-group">
+        <ul class="ingredients">
             <li class="ingredient-add"><span>Ajouter un ingrédient</span></li>
             <li class="ingredient-adding active">
                 <div class="ingredient-adding-fields">
@@ -20,7 +20,7 @@
             </li>
             {% for ingredient in ingredients %}
             <li class="ingredient" data-id="{{ ingredient["id"] }}">
-                <div class="ingredient" data-id="{{ ingredient["id"] }}">{{ ingredient["name"] }} au prix de {{ ingredient["price"] }}</div>
+                <div class="ingredient" data-id="{{ ingredient["id"] }}">{{ ingredient["name"] }} au prix de {{ ingredient["price"] }} €</div>
                 <div class="ingredient-actions" data-id="{{ ingredient["id"] }}">
                     <div class="ingredient-edit" data-id="{{ ingredient["id"] }}"><span>Modifier</span></div>
                     <div class="ingredient-trash" data-id="{{ ingredient["id"] }}"><span>Supprimer</span></div>
