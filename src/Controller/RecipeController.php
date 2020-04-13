@@ -81,6 +81,68 @@ class RecipeController extends AbstractController
     }
 
     /**
+     * Show one recipe
+     * 
+     * @Route("/recipe/{id}", name="recipe")
+     *
+     * @param [type] $id
+     * @param RecipeRepository $recipeRepo
+     * @param RecipeImageRepository $recipeImageRepo
+     * @return void
+     */
+    public function show($id, RecipeRepository $recipeRepo, RecipeImageRepository $recipeImageRepo) {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        /**
+         * Get all ingredients for current user
+         */
+        $recipeResponse = $recipeRepo->findOneBy([
+            'id' => (int) $id
+        ]);
+
+        /**
+         * Get all images about current recipe
+         */
+        $recipeImagesResponse = $recipeImageRepo->findBy([
+            'recipe' => $recipeResponse
+        ]);
+
+        /**
+         * Put the relevant information in a array
+         */
+        $recipe = [
+            'id' => $recipeResponse->getId(),
+            'name' => $recipeResponse->getName(),
+            'instructions' => $recipeResponse->getInstructions(),
+            'time' => $recipeResponse->getTime(),
+            'difficulty' => $recipeResponse->getDifficulty(),
+            'price' => $recipeResponse->getPrice(),
+            'shared' => $recipeResponse->getShared(),
+        ];
+
+        $recipeImage = [];
+        foreach ($recipeImagesResponse as $recipeImageResponse) {
+            array_push($recipeImage, [
+                'id' => $recipeImageResponse->getId(),
+                'url' => $recipeImageResponse->getUrl(),
+            ]);
+        }
+
+        return $this->render('recipe/recipe.html.twig', [
+            'recipe' =>  $recipe,
+            'recipeImage' => $recipeImage
+        ]);
+    }
+
+    /**
      * Read shared recipes and set template
      * 
      * @Route("/shared-recipes", name="shared_recipes")
