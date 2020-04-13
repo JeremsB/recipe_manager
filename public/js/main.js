@@ -480,7 +480,11 @@ class AddRecipe {
                 optionSelected.disabled = "disabled";
 
                 // Set price
-                this.addRecipePrice.value = parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price);
+                //this.addRecipePrice.value = "Prix de la recette "+ parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price) +" €";
+                let test = parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price);
+                alert(typeof optionSelected.dataset.price);
+                //TODO LE PRIX
+                this.addRecipePrice.value = `Prix de la recette ${test} €`;
 
                 // Construct li
                 var div = document.createElement('div');
@@ -489,6 +493,7 @@ class AddRecipe {
                 var a = document.createElement('a');
                 a.classList.add('btn');
                 a.classList.add('btn-danger');
+                a.classList.add('delete-ingred');
                 a.classList.add('ml-3');
                 a.href = "#";
                 a.innerHTML = " X ";
@@ -519,7 +524,7 @@ class AddRecipe {
                         li.remove();
 
                         // Set price
-                        this.addRecipePrice.value = parseFloat(this.addRecipePrice.value) - parseFloat(divActions.dataset.price);
+                        this.addRecipePrice.value = "Prix de la recette "+ parseFloat(this.addRecipePrice.value) - parseFloat(divActions.dataset.price) +" €";
 
                         // Remove disabled
                         var optionSelected = document.querySelector(`.option-ingredients[data-id="${divActions.dataset.id}"]`);
