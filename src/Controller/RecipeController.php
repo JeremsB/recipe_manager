@@ -90,7 +90,7 @@ class RecipeController extends AbstractController
      * @param RecipeImageRepository $recipeImageRepo
      * @return void
      */
-    public function show($id, RecipeRepository $recipeRepo, RecipeImageRepository $recipeImageRepo) {
+    public function show($id, RecipeRepository $recipeRepo, IngredientRepository $ingredientRepo, RecipeImageRepository $recipeImageRepo) {
         $user = $this->getUser();
 
         /**
@@ -102,11 +102,17 @@ class RecipeController extends AbstractController
         ], 403);
 
         /**
-         * Get all ingredients for current user
+         * Get recipe
          */
         $recipeResponse = $recipeRepo->findOneBy([
             'id' => (int) $id
         ]);
+
+        /**
+         * Get all ingredients for current user
+         */
+        $ingredientsResponse = $recipeResponse->getIngredients()->getValues();
+
 
         /**
          * Get all images about current recipe
@@ -128,6 +134,21 @@ class RecipeController extends AbstractController
             'shared' => $recipeResponse->getShared(),
         ];
 
+        /**
+         * Get ingredients of current recipe
+         */
+        $ingredients = [];
+        foreach ($ingredientsResponse as $ingredientResponse) {
+            array_push($ingredients, [
+                'id' => $ingredientResponse->getId(),
+                'name' => $ingredientResponse->getName(),
+                'price' => $ingredientResponse->getPrice()
+            ]);
+        }
+
+        /**
+         * Get images of current recipe
+         */
         $recipeImage = [];
         foreach ($recipeImagesResponse as $recipeImageResponse) {
             array_push($recipeImage, [
@@ -138,6 +159,7 @@ class RecipeController extends AbstractController
 
         return $this->render('recipe/recipe.html.twig', [
             'recipe' =>  $recipe,
+            'ingredients' => $ingredients,
             'recipeImage' => $recipeImage
         ]);
     }
