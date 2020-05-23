@@ -39,17 +39,10 @@ class RecipeController extends AbstractController
         $userId = $user->getId();
 
         /**
-         * Get all ingredients for current user
+         * Get all recipes for current user
          */
         $recipesResponse = $recipeRepo->findBy([
             'user' => (int) $userId
-        ]);
-
-        /**
-         * Get all images about current recipe
-         */
-        $recipeImagesResponse = $recipeImageRepo->findBy([
-            'recipe' => $recipesResponse
         ]);
 
         $recipes = [];
@@ -57,7 +50,7 @@ class RecipeController extends AbstractController
         /**
          * Put the relevant information in a array
          */
-        foreach ($recipesResponse as $index => $recipeResponse) {
+        foreach ($recipesResponse as $recipeResponse) {
             array_push($recipes, [
                 'id' => $recipeResponse->getId(),
                 'name' => $recipeResponse->getName(),
@@ -66,13 +59,8 @@ class RecipeController extends AbstractController
                 'difficulty' => $recipeResponse->getDifficulty(),
                 'price' => $recipeResponse->getPrice(),
                 'shared' => $recipeResponse->getShared(),
+                'images' => $recipeResponse->getImages()->getValues()
             ]);
-            foreach ($recipeImagesResponse as $recipeImageResponse) {
-                array_push($recipes[$index], [
-                    'id' => $recipeImageResponse->getId(),
-                    'url' => $recipeImageResponse->getUrl(),
-                ]);
-            }
         }
 
         return $this->render('recipe/recipes.html.twig', [
@@ -292,6 +280,86 @@ class RecipeController extends AbstractController
     }
 
     /**
+     * Update recipe
+     * 
+     * @Route("/recipe/update/{id}/{encodedIngredientsId}/{encodedData}/{encodedUrlsData}", name="update_recipe")
+     *
+     * @param [type] $id
+     * @param [type] $encodedIngredientsId
+     * @param [type] $encodedData
+     * @param [type] $encodedUrlsData
+     * @return Response
+     */
+    public function update($id, $encodedIngredientsId, $encodedData, $encodedUrlsData, EntityManagerInterface $manager, RecipeRepository $recipeRepo, IngredientRepository $ingredientRepo, RecipeImageRepository $recipeImageRepo) : Response {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        // Decode ingredients id and data
+        $ingredientsId = json_decode(IngredientController::decode($encodedIngredientsId));
+        $data = json_decode(IngredientController::decode($encodedData));
+        $urlsData = json_decode(IngredientController::decode($encodedUrlsData));
+
+        //Set new data for recipe
+        $recipe = $recipeRepo->findOneBy(['id' => $id]);
+
+        $recipe->setName($data->name);
+        $recipe->setInstructions($data->instructions);
+        $recipe->setTime($data->time);
+        $recipe->setDifficulty($data->difficulty);
+        $recipe->setPrice($data->price);
+        $recipe->setShared($data->shared);
+        $recipe->setUser($user);
+
+        // Remove current ingredients on recipe
+        $currentIngredients = $recipe->getIngredients();
+        foreach ($currentIngredients as $ingredient) {
+            $recipe->removeIngredient($ingredient);
+        }
+
+        // Recup ingredients by id and set them for recipe
+        $ingredients = [];
+        foreach ($ingredientsId as $id) {
+            $ingredient = $ingredientRepo->findOneBy([ 'id' => (int) $id ]);
+            $recipe->addIngredient($ingredient);
+            $ingredients[] = $ingredient;
+        }
+
+        // Remove current image
+        $currentImages = $recipe->getImages();
+        foreach ($currentImages as $image) {
+            $recipe->removeImage($image);
+        }
+
+        // Set images for recipe
+        $images = [];
+        foreach ($urlsData as $url) {
+            $recipeImage = new RecipeImage();
+            $recipeImage->setUrl($url);
+            $recipeImage->setRecipe($recipe);
+
+            $manager->persist($recipeImage);
+
+            $recipe->addImage($recipeImage);
+
+            $images[] = $url;
+        }
+
+        $manager->persist($recipe);
+        $manager->flush();
+
+        return $this->json([
+            'message'        => 'Success'
+        ], 200);
+    }
+
+    /**
      * Delete one recipe
      * 
      * @Route("/recipe/delete/{id}", name="delete_recipe")
@@ -356,6 +424,63 @@ class RecipeController extends AbstractController
 
         return $this->render('recipe/create-recipe.html.twig', [
             'ingredients' => $ingredients
+        ]);
+    }
+
+    /**
+     * View update recipe
+     * 
+     * @Route("/update-recipe/{id}", name="update_recipe_view")
+     *
+     * @param integer $id
+     * @param IngredientRepository $ingredientRepo
+     * @return void
+     */
+    public function updateRecipe(int $id, RecipeRepository $recipeRepo, IngredientRepository $ingredientRepo, RecipeImageRepository $recipeImageRepo) {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        $recipe = $recipeRepo->findOneBy(['id' => (int) $id]);
+        $ingredients = $recipe->getIngredients()->getValues();
+        $allIngredientsResponse = $ingredientRepo->findBy(['user' => (int) $user->getId()]);
+        $recipeImagesResponse = $recipeImageRepo->findBy([
+            'recipe' => $recipe
+        ]);
+
+        $allIngredients = [];
+        foreach ($allIngredientsResponse as $ingredientResponse) {
+            array_push($allIngredients, [
+                'id' => $ingredientResponse->getId(),
+                'name' => $ingredientResponse->getName(),
+                'price' => $ingredientResponse->getPrice(),
+                'disabled' => false
+            ]);
+        }
+
+        $flag = null;
+        foreach ($allIngredients as $key => $oneIngredient) {
+            $flag = false;
+            foreach ($ingredients as $ingredient) {
+                if($oneIngredient['id'] === $ingredient->getid()) {
+                    $flag = true;
+                    $allIngredients[$key]['disabled'] =  $flag;
+                }
+                if($flag) break;
+            }   
+        } 
+
+        return $this->render('recipe/update-recipe.html.twig', [
+            'recipe' => $recipe,
+            'ingredients' => $ingredients,
+            'allIngredients' => $allIngredients,
+            'images' => $recipeImagesResponse
         ]);
     }
 }

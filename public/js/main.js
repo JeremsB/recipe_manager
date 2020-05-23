@@ -440,8 +440,6 @@ class Recipe {
                     // Delete on database
                     const url = `/recipe/delete/${recipeDelete.dataset.id}`;
 
-                    console.log(recipeDelete.dataset.id);
-
                     var xhr = new XMLHttpRequest();
                     xhr.open('GET', url);
                     xhr.send();
@@ -452,7 +450,7 @@ class Recipe {
 }
 
 class AddRecipe {
-    constructor(addRecipeName, addRecipeIngredients, addRecipeInstructions, addRecipeTime, addRecipeDifficulty, addRecipeShared, addRecipePrice, addRecipeSubmit) {
+    constructor(addRecipeName, addRecipeIngredients, addRecipeInstructions, addRecipeTime, addRecipeDifficulty, addRecipeShared, addRecipePrice, addRecipeSubmit, updateRecipeSubmit) {
         this.addRecipeName = addRecipeName;
         this.addRecipeIngredients = addRecipeIngredients;
         this.addRecipeInstructions = addRecipeInstructions;
@@ -461,6 +459,7 @@ class AddRecipe {
         this.addRecipeShared = addRecipeShared;
         this.addRecipePrice = addRecipePrice;
         this.addRecipeSubmit = addRecipeSubmit;
+        this.updateRecipeSubmit = updateRecipeSubmit;
 
         if(this.addRecipeIngredients) {
             this.listenOnChangeSelectIngredients();
@@ -469,6 +468,33 @@ class AddRecipe {
         if(this.addRecipeSubmit) {
             this.listenOnClickRecipeSubmit();
         }
+
+        if(this.updateRecipeSubmit) {
+            this.listenOnClickRecipeUpdate();
+            this.listenOnRemoveCurrentIngredients();
+        }
+
+        
+    }
+
+    listenOnRemoveCurrentIngredients() {
+        var ing = document.querySelectorAll('.choosen-ingredient div.div-actions');
+
+        ing.forEach(element => {
+            element.addEventListener('click', event => {
+                event.preventDefault();
+                
+                if (confirm("Voulez vous supprimer cet ingrédient ?")) {
+                    // Remove from list
+                    var li = document.querySelector(`.choosen-ingredient[data-id="${element.dataset.id}"]`);
+                    li.remove();
+
+                    // Remove disabled
+                    var optionSelected = document.querySelector(`.option-ingredients[data-id="${element.dataset.id}"]`);
+                    optionSelected.disabled = "";
+                }
+            })
+        });
     }
 
     listenOnChangeSelectIngredients() {
@@ -482,7 +508,6 @@ class AddRecipe {
                 // Set price
                 //this.addRecipePrice.value = "Prix de la recette "+ parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price) +" €";
                 let test = parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price);
-                alert(typeof optionSelected.dataset.price);
                 //TODO LE PRIX
                 this.addRecipePrice.value = `Prix de la recette ${test} €`;
 
@@ -528,10 +553,11 @@ class AddRecipe {
 
                         // Remove disabled
                         var optionSelected = document.querySelector(`.option-ingredients[data-id="${divActions.dataset.id}"]`);
-                        console.log(optionSelected);
                         optionSelected.disabled = "";
                     }
                 })
+
+                
             }
         })
     }
@@ -547,7 +573,6 @@ class AddRecipe {
             var time = this.addRecipeTime.value;
             var difficulty = this.addRecipeDifficulty.value;
             var shared = this.addRecipeShared.checked;
-            console.log(shared);
             var price = 0;
             ingredients.forEach(element => {
                 price = price + parseFloat(element.dataset.price);
@@ -575,7 +600,6 @@ class AddRecipe {
             urls.forEach(element => {
                 element.value.length == 0 ? '' : urlsData.push(element.value);
             })
-            console.log(urlsData);
 
             var jsonIngredientsId = JSON.stringify(ingredientsId);
             var jsonData = JSON.stringify(data);
@@ -588,6 +612,7 @@ class AddRecipe {
 
             // Create recipe on database
             const url = `/recipe/create/${encodedIngredientsId}/${encodedData}/${encodedUrlsData}`;
+            console.log(url);
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url);
@@ -595,6 +620,71 @@ class AddRecipe {
 
             // Go to list of all recipes
             window.location.href = `/recipes`;
+        })
+    }
+
+    listenOnClickRecipeUpdate() {
+        this.updateRecipeSubmit.addEventListener('click', event => {
+            event.preventDefault();
+
+            var id = this.updateRecipeSubmit.dataset.id;
+            
+            // Get value of all fields
+            var name = this.addRecipeName.value;
+            var ingredients = [].slice.call(document.querySelectorAll('.choosen-ingredient'));
+            var instructions = this.addRecipeInstructions.value;
+            var time = this.addRecipeTime.value;
+            var difficulty = this.addRecipeDifficulty.value;
+            var shared = this.addRecipeShared.checked;
+            var price = 0;
+            ingredients.forEach(element => {
+                price = price + parseFloat(element.dataset.price);
+            })
+            var urls = [].slice.call(document.querySelectorAll('.form-control.image'));
+
+            // Get all ID of selected ingrdients
+            var ingredientsId = [];
+            ingredients.forEach(element => {
+                ingredientsId.push(element.dataset.id)
+            })
+
+            // Get all value of selected fields
+            var data = {
+                'name': name,
+                'instructions': instructions,
+                'time': time,
+                'difficulty': difficulty,
+                'shared': shared,
+                'price': price
+            }
+
+            // Get all url of urls fields
+            var urlsData = [];
+            urls.forEach(element => {
+                element.value.length == 0 ? '' : urlsData.push(element.value);
+            })
+
+            console.log(urlsData);
+
+            var jsonIngredientsId = JSON.stringify(ingredientsId);
+            var jsonData = JSON.stringify(data);
+            var jsonUrlsData = JSON.stringify(urlsData);
+
+            // Encode all data
+            var encodedIngredientsId = encodeURIComponent(window.btoa(jsonIngredientsId));
+            var encodedData = encodeURIComponent(window.btoa(jsonData));
+            var encodedUrlsData = encodeURIComponent(window.btoa(jsonUrlsData));
+
+            // Create recipe on database
+            const url = `/recipe/update/${id}/${encodedIngredientsId}/${encodedData}/${encodedUrlsData}`;
+            console.log(url);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.send();
+
+            // Go to list of all recipes
+            document.location.href = `/recipes`;
         })
     }
 }
@@ -627,9 +717,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const addRecipeDifficulty = document.querySelector('.form-control.difficulty');
     const addRecipeShared = document.querySelector('.form-check-input.shared');
     const addRecipePrice = document.querySelector('.form-control.price');
-    const addRecipeSubmit = document.querySelector('.form-control.submit');
+    const addRecipeSubmit = document.querySelector('.form-control.submit.add');
+    const updateRecipeSubmit = document.querySelector('.form-control.submit.update');
 
-    if(addRecipeName && addRecipeIngredients && addRecipeInstructions && addRecipeTime && addRecipeDifficulty && addRecipeShared && addRecipePrice && addRecipeSubmit) {
-        new AddRecipe(addRecipeName, addRecipeIngredients, addRecipeInstructions, addRecipeTime, addRecipeDifficulty, addRecipeShared, addRecipePrice, addRecipeSubmit);
+    if(addRecipeName && addRecipeIngredients && addRecipeInstructions && addRecipeTime && addRecipeDifficulty && addRecipeShared && addRecipePrice && addRecipeSubmit && updateRecipeSubmit) {
+        new AddRecipe(addRecipeName, addRecipeIngredients, addRecipeInstructions, addRecipeTime, addRecipeDifficulty, addRecipeShared, addRecipePrice, addRecipeSubmit, updateRecipeSubmit);
     }
 })

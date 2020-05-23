@@ -98,3 +98,7 @@
 div.ingredient.active{
     display: none;
 }
+
+.option-ingredients:disabled {
+    color: red;
+}
