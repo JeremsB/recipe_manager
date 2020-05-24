@@ -619,7 +619,7 @@ class AddRecipe {
             xhr.send();
 
             // Go to list of all recipes
-            window.location.href = `/recipes`;
+            document.location.href = `/recipes`;
         })
     }
 
@@ -689,6 +689,36 @@ class AddRecipe {
     }
 }
 
+class OneRecipeView {
+    constructor(setMark) {
+        this.setMark = setMark;
+
+        if(this.setMark) {
+            this.onClickSetMark();
+        }
+    }
+
+    onClickSetMark() {
+        this.setMark.addEventListener('click', event => {
+            event.preventDefault();
+
+            var currentUserId = this.setMark.dataset.userId;
+            var recipeId = this.setMark.dataset.recipeId;
+            var select = document.querySelector('.mark');
+            var valueSelect = select.options[select.selectedIndex].value;
+
+            const url = `/recipe/set-mark/${currentUserId}/${recipeId}/${valueSelect}`;
+            console.log(url);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.send();
+
+            document.location.href = `/recipe/${recipeId}`;
+        })
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const list = document.querySelector('.ingredients');
     const edit = [].slice.call(document.querySelectorAll('.ingredient-edit'));
@@ -708,6 +738,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if(recipeDelete) {
         new Recipe(recipeDelete);
+    }
+
+    const setMark = document.querySelector('.set-mark');
+    if(setMark) {
+        new OneRecipeView(setMark);
     }
 
     const addRecipeName = document.querySelector('.form-control.name');

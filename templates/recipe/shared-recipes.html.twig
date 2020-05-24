@@ -7,7 +7,9 @@
     <div class="recipes">
         {% for recipe in recipes %}
         <div class="card recipe" data-id="{{ recipe.id }}">
-            <img style="border-radius: 3px 3px 0px 0px/25px 25px 25px 5px;" src="https://via.placeholder.com/350x250">
+            <a href="/recipe/{{ recipe.id }}">
+                <img style="border-radius: 3px 3px 0px 0px/25px 25px 25px 5px; width: 395px; height: 250px;" src="{{ (recipe.images[0] is defined) ? recipe.images[0].url : 'https://via.placeholder.com/380x250' }}">
+            </a>
             <div class="card-body">
                 <h5 class="card-title">{{ recipe.name }}</h5>
                 <p class="card-text">{{ recipe.instructions }}</p>

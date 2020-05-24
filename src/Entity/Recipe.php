@@ -63,10 +63,16 @@ class Recipe
      */
     private $images;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Mark::class, mappedBy="recipe")
+     */
+    private $marks;
+
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->marks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -209,6 +215,37 @@ class Recipe
             // set the owning side to null (unless already changed)
             if ($image->getRecipe() === $this) {
                 $image->setRecipe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Mark[]
+     */
+    public function getMarks(): Collection
+    {
+        return $this->marks;
+    }
+
+    public function addMark(Mark $mark): self
+    {
+        if (!$this->marks->contains($mark)) {
+            $this->marks[] = $mark;
+            $mark->setRecipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMark(Mark $mark): self
+    {
+        if ($this->marks->contains($mark)) {
+            $this->marks->removeElement($mark);
+            // set the owning side to null (unless already changed)
+            if ($mark->getRecipe() === $this) {
+                $mark->setRecipe(null);
             }
         }
 
