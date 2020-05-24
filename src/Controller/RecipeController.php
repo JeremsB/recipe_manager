@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\Recipe;
 use App\Repository\RecipeRepository;
 use App\Controller\IngredientController;
+use App\Entity\Mark;
 use App\Entity\RecipeImage;
 use App\Repository\IngredientRepository;
+use App\Repository\MarkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\RecipeImageRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -110,6 +113,25 @@ class RecipeController extends AbstractController
         ]);
 
         /**
+         * Get mark average
+         */
+        $rating = $recipeResponse->getMarks()->getValues();
+        $average = 0;
+        foreach ($rating as $object) {
+            $average+= $object->getMark();
+        }
+
+        $average = $average / count($rating);
+
+        /**
+         * Get current user and creator of recipe
+         */
+        $currentUser = $this->getUser();
+        $creatorUser = $recipeResponse->getUser();
+
+        $sameUser = ($currentUser === $creatorUser) ? true : false;
+
+        /**
          * Put the relevant information in a array
          */
         $recipe = [
@@ -148,7 +170,10 @@ class RecipeController extends AbstractController
         return $this->render('recipe/recipe.html.twig', [
             'recipe' =>  $recipe,
             'ingredients' => $ingredients,
-            'recipeImage' => $recipeImage
+            'recipeImage' => $recipeImage,
+            'sameUser' => $sameUser,
+            'currentUserId' => $this->getUser()->getId(),
+            'average' => $average
         ]);
     }
 
@@ -194,7 +219,7 @@ class RecipeController extends AbstractController
         /**
          * Put the relevant information in a array
          */
-        foreach ($recipesResponse as $index => $recipeResponse) {
+        foreach ($recipesResponse as $recipeResponse) {
             array_push($recipes, [
                 'id' => $recipeResponse->getId(),
                 'name' => $recipeResponse->getName(),
@@ -203,17 +228,24 @@ class RecipeController extends AbstractController
                 'difficulty' => $recipeResponse->getDifficulty(),
                 'price' => $recipeResponse->getPrice(),
                 'shared' => $recipeResponse->getShared(),
+                'images' => $recipeResponse->getImages()->getValues()
             ]);
-            foreach ($recipeImagesResponse as $recipeImageResponse) {
-                array_push($recipes[$index], [
-                    'id' => $recipeImageResponse->getId(),
-                    'url' => $recipeImageResponse->getUrl(),
-                ]);
-            }
+        }
+
+        /**
+         * Get images of current recipe
+         */
+        $recipeImage = [];
+        foreach ($recipeImagesResponse as $recipeImageResponse) {
+            array_push($recipeImage, [
+                'id' => $recipeImageResponse->getId(),
+                'url' => $recipeImageResponse->getUrl(),
+            ]);
         }
 
         return $this->render('recipe/shared-recipes.html.twig', [
-            'recipes' =>  $recipes
+            'recipes' =>  $recipes,
+            'recipeImage' => $recipeImage
         ]);
     }
 
@@ -482,5 +514,53 @@ class RecipeController extends AbstractController
             'allIngredients' => $allIngredients,
             'images' => $recipeImagesResponse
         ]);
+    }
+    
+    /**
+     * Set mark
+     * 
+     * @Route("recipe/set-mark/{idUser}/{idRecipe}/{markValue}", name="set_mark")
+     *
+     * @param integer $idUser
+     * @param integer $idRecipe
+     * @param integer $markValue
+     * @param MarkRepository $markRepo
+     * @return void
+     */
+    public function setMark(int $idUser, int $idRecipe, int $markValue, MarkRepository $markRepo, UserRepository $userRepo, RecipeRepository $recipeRepo, EntityManagerInterface $manager) {
+        $user = $this->getUser();
+
+        /**
+         * Check if user is connected
+         */
+        if (!$user) return $this->json([
+            'code'      => 403,
+            'message'   => 'Unauthorized'
+        ], 403);
+
+        $user = $userRepo->findOneBy(["id" => $idUser]);
+        $recipe = $recipeRepo->findOneBy(["id" => $idRecipe]);
+
+        $mark = $markRepo->findOneBy([
+            'user' => $user,
+            'recipe' => $recipe
+        ]);
+
+        $alreadyRated = empty($mark) ? false : true;
+        if($alreadyRated) {
+            $mark->setMark($markValue);
+        }else {
+            $mark = new Mark();
+            $mark->setUser($user);
+            $mark->setRecipe($recipe);
+            $mark->setMark($markValue);
+        }
+
+        $manager->persist($mark);
+        $manager->flush();
+
+        return $this->json([
+            'message'        => 'Success'
+        ], 200);
     }
 }

@@ -19,22 +19,20 @@ class RecipeRepository extends ServiceEntityRepository
         parent::__construct($registry, Recipe::class);
     }
 
-    // /**
-    //  * @return Recipe[] Returns an array of Recipe objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+    public function markAverage($id) {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('
+            SELECT DISTINCT r.id, avg(m.mark)
+            FROM App\Entity\Recipe as r
+            INNER JOIN App\Entity\Mark as m
+            WHERE r.id = :id
+        ')
+        ->setParameter('id', $id);
+        $products = $query->getResult();
+
+        return $products;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Recipe
