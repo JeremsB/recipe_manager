@@ -8,7 +8,12 @@
         <h1 class="title">{{ recipe.name }}</h1>
     </div>
     <div class="form-group">
+        {% if average != 0 %}
         <h1 class="title">La moyenne de cette recette est de {{ average }}/10</h1>
+        {% else %}
+        <h1 class="title">Cette recette ne possède pas de notation</h1>
+        {% endif %}
+        
     </div>
     <div class="form-group recipe">
         {% for image in recipeImage %}

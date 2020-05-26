@@ -121,7 +121,9 @@ class RecipeController extends AbstractController
             $average+= $object->getMark();
         }
 
-        $average = $average / count($rating);
+        if(count($rating) != 0) {
+            $average = $average / count($rating);
+        }
 
         /**
          * Get current user and creator of recipe

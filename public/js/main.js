@@ -489,6 +489,12 @@ class AddRecipe {
                     var li = document.querySelector(`.choosen-ingredient[data-id="${element.dataset.id}"]`);
                     li.remove();
 
+                    var currentPrice = document.querySelector('.form-control.price').innerHTML;
+                    var removingPrice = element.dataset.price;
+                    var newPrice = parseInt(currentPrice) - parseInt(removingPrice);
+                    
+                    document.querySelector('.form-control.price').innerHTML = newPrice;
+
                     // Remove disabled
                     var optionSelected = document.querySelector(`.option-ingredients[data-id="${element.dataset.id}"]`);
                     optionSelected.disabled = "";
@@ -504,12 +510,13 @@ class AddRecipe {
             if(confirm("Ajouter cet ingrédient ?")) {
                 var optionSelected = document.querySelectorAll('.option-ingredients')[this.addRecipeIngredients.value];
                 optionSelected.disabled = "disabled";
+                console.log('test');
 
-                // Set price
-                //this.addRecipePrice.value = "Prix de la recette "+ parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price) +" €";
-                let test = parseFloat(this.addRecipePrice.value) + parseFloat(optionSelected.dataset.price);
-                //TODO LE PRIX
-                this.addRecipePrice.value = `Prix de la recette ${test} €`;
+                var currentPrice = document.querySelector('.form-control.price').innerHTML;
+                var addingPrice = optionSelected.dataset.price;
+                var newPrice = parseInt(currentPrice) + parseInt(addingPrice);
+                
+                document.querySelector('.form-control.price').innerHTML = newPrice;
 
                 // Construct li
                 var div = document.createElement('div');
@@ -548,8 +555,11 @@ class AddRecipe {
                         var li = document.querySelector(`.choosen-ingredient[data-id="${divActions.dataset.id}"]`);
                         li.remove();
 
-                        // Set price
-                        this.addRecipePrice.value = "Prix de la recette "+ parseFloat(this.addRecipePrice.value) - parseFloat(divActions.dataset.price) +" €";
+                        var currentPrice = document.querySelector('.form-control.price').innerHTML;
+                        var removingPrice = divActions.dataset.price;
+                        var newPrice = parseInt(currentPrice) - parseInt(removingPrice);
+                        
+                        document.querySelector('.form-control.price').innerHTML = newPrice;
 
                         // Remove disabled
                         var optionSelected = document.querySelector(`.option-ingredients[data-id="${divActions.dataset.id}"]`);
@@ -607,7 +617,7 @@ class AddRecipe {
 
             // Encode all data
             var encodedIngredientsId = encodeURIComponent(window.btoa(jsonIngredientsId));
-            var encodedData = encodeURIComponent(window.btoa(jsonData));
+            var encodedData = encodeURIComponent(window.btoa(jsonData.normalize("NFD").replace(/[\u0300-\u036f]/g, "")));
             var encodedUrlsData = encodeURIComponent(window.btoa(jsonUrlsData));
 
             // Create recipe on database
@@ -619,7 +629,7 @@ class AddRecipe {
             xhr.send();
 
             // Go to list of all recipes
-            document.location.href = `/recipes`;
+            document.location.href = `/recipes/`;
         })
     }
 
@@ -672,7 +682,7 @@ class AddRecipe {
 
             // Encode all data
             var encodedIngredientsId = encodeURIComponent(window.btoa(jsonIngredientsId));
-            var encodedData = encodeURIComponent(window.btoa(jsonData));
+            var encodedData = encodeURIComponent(window.btoa(jsonData.normalize("NFD").replace(/[\u0300-\u036f]/g, "")));
             var encodedUrlsData = encodeURIComponent(window.btoa(jsonUrlsData));
 
             // Create recipe on database
@@ -684,7 +694,7 @@ class AddRecipe {
             xhr.send();
 
             // Go to list of all recipes
-            document.location.href = `/recipes`;
+            document.location.href = `/recipes/`;
         })
     }
 }
