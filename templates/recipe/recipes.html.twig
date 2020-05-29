@@ -12,7 +12,7 @@
         {% for recipe in recipes %}
         <div class="card recipe" data-id="{{ recipe.id }}">
             <a href="/recipe/{{ recipe.id }}">
-                <img style="border-radius: 3px 3px 0px 0px/25px 25px 25px 5px; width: 380px; height: 250px;" src="{{ (recipe.images[0] is defined) ? recipe.images[0].url : 'https://via.placeholder.com/350x250' }}">
+                <img style="border-radius: 3px 3px 0px 0px/25px 25px 25px 5px; width: 395px; height: 250px;" src="{{ (recipe.images[0] is defined) ? recipe.images[0].url : 'https://via.placeholder.com/350x250' }}">
             </a>
             <div class="card-body">
                 <h5 class="card-title">{{ recipe.name }}</h5>
