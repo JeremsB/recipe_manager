@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello RecipeController!{% endblock %}
+
+{% block body %}
+<div class="container mt-5 recipe-header">
+    <h1>{{recipe.name }}</h1>
+</div>
+<div class="container mt-5">
+    <div class="create-recipe">
+        <div class="form-group name">
+            <label for="name">Nom de la recette</label>
+            <input type="text" class="form-control name name-input" value="{{recipe.name }}">
+        </div>
+        <div class="form-group recipe-ingredients">
+            <label for="name">Vos ingrédients</label>
+            <select class="form-control recipe-ingredients">
+                <option value="choose" selected="true" disabled="disabled">Choisissez un (ou plusieurs) ingrédient(s)</option>
+                {% for key, ingredient in allIngredients %}
+                    <option class="option-ingredients" value="{{ key }}" data-id="{{ ingredient.id }}" data-name="{{ ingredient.name }}" data-price="{{ ingredient.price }}" {{ ingredient.disabled ? 'disabled="disabled"' : '' }}>{{ ingredient.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="name">Vos ingrédients choisis</label>
+            <ul class="choosen-ingredients">
+                {% for key, ingredient in ingredients %}
+                    <li class="choosen-ingredient" data-id="{{ ingredient.id }}" data-name="{{ ingredient.name }}" data-price="{{ ingredient.price }}">
+                        <div>{{ ingredient.name }}</div>
+                        <div class="div-actions" data-id="{{ ingredient.id }}"data-price="{{ ingredient.price }}"><a class="btn btn-danger ml-3" href="#"> X </a></div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="form-group instructions">
+            <label for="instructions">Instructions</label>
+            <textarea class="form-control instructions instructions-input" name="instructions"cols="30" rows="10">{{ recipe.instructions }}</textarea>
+        </div>
+        <div class="form-group time">
+            <label for="name">Temps (en minutes)</label>
+            <input type="number" class="form-control time time-input" value="{{ recipe.time }}">
+        </div>
+        <div class="form-group difficulty">
+            <label for="name">Difficulté</label>
+            <select class="form-control difficulty difficulty-input">
+                <option {{ recipe.difficulty == 1 ? 'selected="selected"' : '' }}>1</option>
+                <option {{ recipe.difficulty == 2 ? 'selected="selected"' : '' }}>2</option>
+                <option {{ recipe.difficulty == 3 ? 'selected="selected"' : '' }}>3</option>
+                <option {{ recipe.difficulty == 4 ? 'selected="selected"' : '' }}>4</option>
+                <option {{ recipe.difficulty == 5 ? 'selected="selected"' : '' }}>5</option>
+            </select>
+        </div>
+        <div class="form-group shared" style="margin-left: 40px;">
+            <input type="checkbox" class="form-check-input shared" {{ recipe.shared ? 'checked' : '' }}>
+            <label class="form-check-label">Partager à la communauté</label>
+        </div>
+        <div class="form-group price">
+            <label>Prix de la recette : <span class="form-control price">{{ recipe.price }}</span></label>
+        </div>
+        <div class="form-group images">
+            <label>URL de l'image 1</label>
+            <input type="text" class="form-control image image-1-input" value="{{ (images[0] is defined) ? images[0].url : '' }}">
+
+            <label>URL de l'image 2</label>
+            <input type="text" class="form-control image image-2-input"  value="{{ (images[1] is defined) ? images[1].url : '' }}">
+
+            <label>URL de l'image 3</label>
+            <input type="text" class="form-control image image-3-input"  value="{{ (images[2] is defined) ? images[2].url : '' }}">
+
+            <label>URL de l'image 4</label>
+            <input type="text" class="form-control image image-4-input"  value="{{ (images[3] is defined) ? images[3].url : '' }}">
+
+            <label>URL de l'image 5</label>
+            <input type="text" class="form-control image image-5-input"  value="{{ (images[4] is defined) ? images[4].url : '' }}">
+        </div>
+        <div class="form-group submit" style="text-align: center">
+            <a href="#" data-id="{{ recipe.id }}" class="form-control submit btn btn-success update" style="width: 20%;">Sauvegarder ma recette !</a>
+        </div>
+        <div class="form-group submit" style="text-align: center; display: none;">
+            <a href="#" class="form-control submit btn btn-success add" style="width: 20%;">Créer ma recette !</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

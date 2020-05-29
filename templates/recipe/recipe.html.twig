@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello RecipeController!{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="form-group">
+        <h1 class="title">{{ recipe.name }}</h1>
+    </div>
+    <div class="form-group">
+        {% if average != 0 %}
+        <h1 class="title">La moyenne de cette recette est de {{ average }}/10</h1>
+        {% else %}
+        <h1 class="title">Cette recette ne possède pas de notation</h1>
+        {% endif %}
+        
+    </div>
+    <div class="form-group recipe">
+        {% for image in recipeImage %}
+            <img src="{{ image.url }}" alt="">
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <h2 class="title">Ingrédient(s) utilisé(s)</h2>
+        <ul>
+            {% for ingredient in ingredients %}
+            <li>{{ ingredient.name }} au prix de {{ ingredient.price }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="form-group">
+        <h2 class="title">Instructions</h2>
+        <p>{{ recipe.instructions }}</p>
+    </div>
+    <div class="form-group">
+        <h2 class="title">Temps de préparation</h2>
+        <p>{{ recipe.time }} minutes</p>
+    </div>
+    <div class="form-group">
+        <h2 class="title">Difficulté</h2>
+        <p>{{ recipe.difficulty }}/5</p>
+    </div>
+    <div class="form-group">
+        <h2 class="title">Prix</h2>
+        <p>{{ recipe.price }} €</p>
+    </div>
+    <div class="form-group">
+        {% if recipe.shared %}
+            {% if sameUser == false %} 
+            <h2 class="title">Noter cette recette</h2>
+            <select class="mark">
+                {% for i in 1..10 %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <a class="set-mark" data-user-id="{{ currentUserId }}" data-recipe-id="{{ recipe.id }}" href="">Mettre cette note à la recette !</a> <span>(Si votre note n'est pas pris en compte, recharger la page manuellement)</span>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

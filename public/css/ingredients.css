@@ -1,0 +1,104 @@
+.ingredients {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    padding: 0rem !important;
+    height: 75vh;
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.ingredient {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0.25rem 0.5rem;
+}
+
+.ingredient-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.ingredient-trash,
+.ingredient-edit,
+.ingredient-add,
+.ingredient-adding-cancel,
+.ingredient-adding-add,
+.ingredient-update-edit,
+.ingredient-update-trash {
+    cursor: pointer;
+}
+
+.ingredient-trash {
+    margin-left: 1.5rem;
+}
+
+.ingredient-add {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 1rem 0.75rem 2rem 0;
+}
+
+.ingredient-adding-cancel > span,
+.ingredient-trash > span,
+.ingredient-update-trash > span {
+    background-color: red;
+    border-radius: 8px;
+    color: white;
+    padding: 0.5rem;
+}
+
+.ingredient-adding {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 1rem 0.75rem 2rem 0;
+}
+
+.ingredient-adding-add > span,
+.ingredient-add > span,
+.ingredient-update-edit > span {
+    background-color: green;
+    border-radius: 8px;
+    color: white;
+    padding: 0.5rem;
+}
+
+.ingredient-adding-fields,
+.ingredient-adding-submit,
+.ingredient-update-fields,
+.ingredient-update-actions {
+    display: flex;
+    flex-direction: row;
+}
+
+.ingredient-adding-fields > input,
+.ingredient-update-fields > input {
+    padding: 0 !important;
+    height: 2rem !important;
+}
+
+.ingredient-adding-name,
+.ingredient-adding-add,
+.ingredient-update-name,
+.ingredient-update-edit {
+    margin-right: 1.5rem;
+}
+
+.ingredient-add.active,
+.ingredient-adding.active,
+.ingredient-update-fields.active,
+.ingredient-update-actions.active,
+.ingredient-actions.active,
+div.ingredient.active{
+    display: none;
+}
+
+.option-ingredients:disabled {
+    color: red;
+}

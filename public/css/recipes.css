@@ -1,0 +1,59 @@
+.recipes {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin: 1rem;
+}
+
+.recipe-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.time-difficulty-price {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.form-group.recipe {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.form-group.recipe > img{
+    width: 25rem;
+    margin: 1rem;
+}
+
+.card.recipe {
+    width: 25rem;
+    margin: 2rem;
+}
+
+.choosen-ingredients {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0 !important;
+}
+
+.choosen-ingredient {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: baseline;
+    margin: 0.5rem;
+    background-color: lightgray;
+    padding: 0.5rem;
+    border-radius: 15px;
+    flex-wrap: wrap;
+}
+
+.create-recipe label {
+    font-size: 1.25rem !important;
+}

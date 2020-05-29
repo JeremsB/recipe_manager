@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recettes{% endblock %}
+
+{% block body %}
+<div class="container mt-5 recipe-header">
+    <h1>Mes recettes</h1>
+    <a href="/create-recipe" class="btn btn-success" style="line-height: 2.5;">Créer une recette</a>
+</div>
+<div class="container mt-5">
+    <div class="recipes">
+        {% for recipe in recipes %}
+        <div class="card recipe" data-id="{{ recipe.id }}">
+            <a href="/recipe/{{ recipe.id }}">
+                <img style="border-radius: 3px 3px 0px 0px/25px 25px 25px 5px; width: 395px; height: 250px;" src="{{ (recipe.images[0] is defined) ? recipe.images[0].url : 'https://via.placeholder.com/350x250' }}">
+            </a>
+            <div class="card-body">
+                <h5 class="card-title">{{ recipe.name }}</h5>
+                <p class="card-text">{{ recipe.instructions }}</p>
+                <div class="time-difficulty-price mb-5">
+                    <div class="time">Temps : {{ recipe.time }}min.</div>
+                    <div class="difficulty">Difficulté : {{ recipe.difficulty }}/5</div>
+                    <div class="price">Prix : {{ recipe.price }}</div>
+                </div>
+                <a href="/update-recipe/{{ recipe.id  }}" class="btn btn-primary" data-id="{{ recipe.id  }}">Modifier</a>
+                <a href="#" class="btn btn-danger recipe-delete" data-id="{{ recipe.id  }}">Supprimer</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

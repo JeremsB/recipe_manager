@@ -3,10 +3,23 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/global.css">
+        <link rel="stylesheet" href="/css/ingredients.css">
+        <link rel="stylesheet" href="/css/recipes.css">
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        {% block header %}
+            {% include 'blocks/navbar.html.twig' %}
+        {% endblock %}
         {% block body %}{% endblock %}
+
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/popper.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/main.js"></script>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

@@ -1,0 +1,57 @@
+{% set logged = is_granted('IS_AUTHENTICATED_FULLY') %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+
+    {% if logged %}
+    <div class="container middle-screen">
+        <div>
+            <ul class="home-box">
+                <a href="/ingredients"><li class="home-box-items"><div class="red">Mes ingrédients</div></li></a>
+                <a href="/recipes"><li class="home-box-items"><div class="green">Mes recettes</div></li></a>
+                <a href="/shared-recipes"><li class="home-box-items"><div class="yellow">Recettes de la communauté</div></li></a>
+                <a href="/account/profile"><li class="home-box-items"><div class="orange">Voir mon profil</div></li></a>
+            </ul>
+        </div>
+    </div>
+    {% else %}
+    <div class="container middle-screen">
+        <div class="row flex-column">
+            <a class="navbar-brand rainbow" href="/">
+            <img src="/img/icon.png" style="width: 40px; margin-right: 10px;">
+            MyRecipeManager</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <h2>Pour tester l'application, le compe suivant est diposbible : </h2>
+            <ul>
+                <li>Email : guillaume.ballas@persistance.com</li>
+                <li>Mot de passe : password</li>
+            </ul>
+            <p>Notre entreprise vient de signer un contrat pour développer un nouveau service en ligne : MyRecipeManager !</p>
+            <p>Quel est le but de cette application ? Cette application web va vous permettre de :</p>
+            <ul>
+                <li>Créer et gérer vos propres recettes</li>
+                <li>Partager vos recettes et vous inspirez des recettes partagées par la communauté</li>
+            </ul>
+            <p>Vous pouvez vous créer un compte et le gérer vous même. Une fois connecté, vous serez en mesure de gérer une liste d'ingrédients, créée par vous-même !</p>
+            <p>Vous pourrez y ajouter des ingrédients (nom et prix). Cette liste d'ingrédients servira à créer vos propres recettes.</p>
+            <p>Vous pourrez donc composer vos propres recettes, avec plusieurs paramètres : </p>
+            <ul>
+                <li>Un nom ainsi qu'une courte description</li>
+                <li>Quelques instructions pour la réaliser</li>
+                <li>Le temps de préparation (en minutes) et le niveau de difficulté (De 1 à 5)</li>
+                <li>5 images pour illustrer vos propres recettes</li>
+                <li>Et le prix total de votre recette</li>
+            </ul>
+            <p>Vous pourrez bien sur partager vos recettes à la communauté de MyRecipeManager, et voir les recettes partagées par la communauté !</p>
+            <p>Il vous sera également possible de noter les recettes partagées par la communauté</p>
+            <p>Une page sera disponible pour voir les meilleures recettes (peut-être les vôtres seront parmi celles-là) et aussi rechercher la recette qui vous intéresse en fonction d'un mot-clé dans le nom de la recette !</p>
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}
