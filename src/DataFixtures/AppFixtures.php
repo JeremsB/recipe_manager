@@ -33,8 +33,8 @@ class AppFixtures extends Fixture
         // Création de l'utilisateur de test
         $user = new User();
 
-        $user->setPseudo("Guillaume Ballas");
-        $user->setEmail("guillaume.ballas@persistance.com");
+        $user->setPseudo("Guillaume Balas");
+        $user->setEmail("guillaume.balas@persistance.com");
 
         $hash = $this->encoder->encodePassword($user, 'password');
         $user->setHash($hash);
