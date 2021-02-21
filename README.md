@@ -2,11 +2,11 @@
 
 Projet réalisé à MyDigitalSchool utilisant un Framework de persistance (Symfony 4).
 
-Accès en ligne: https://mds-recipe-manager.herokuapp.com/
+Accès en ligne : https://mds-recipe-manager.herokuapp.com/
 
 ## En cas de problème
 
-Si la chance n'est pas de notre côté (donc si le lien marche pas), on peut tester l'application en local.
+Si la chance n'est pas de notre côté (donc si le lien marche pas), il sera eventuellement possible d'éxecuter l'application en local.
 
 1. Installer le CLI de Symfony (disponible depuis la v5) : https://symfony.com/download
 
